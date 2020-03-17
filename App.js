@@ -3,7 +3,7 @@ import { StyleSheet, View, SafeAreaView } from 'react-native'
 import { Text } from './components'
 import Navigation from './navigation'
 
-// test lagi
+// test lagi lagi
 
 export default function App() {
   return (
