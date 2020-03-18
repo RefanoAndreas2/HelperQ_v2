@@ -5,9 +5,9 @@ import { theme, mocks } from '../../constants';
 
 const helper = {
   keterampilan : [
-    {id: 0, title: 'Jabodetabek', desc: '-'},
-    {id: 1, title: 'Bandung', desc: '-'},
-    {id: 2, title: 'Yogyakarta', desc: '-'},
+    {id: 0, title: 'Merapikan Rumah', desc: '-'},
+    {id: 1, title: 'Memasak', desc: '-'},
+    {id: 2, title: 'Mencuci manual', desc: '-'},
   ]
 }
 
@@ -44,7 +44,7 @@ export default class ViewKeterampilan extends Component {
     return (
       <ScrollView style={styles.parent}>
         <View padding={theme.sizes.base}>
-          <Text bold>Bersedia bekerja di</Text>
+          <Text bold>Keterampilan</Text>
         </View>
         <View padding={theme.sizes.base}>
           <FlatList

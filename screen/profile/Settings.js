@@ -6,9 +6,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 const helper = {
   keterampilan : [
-    {id: 0, title: 'Change Password', desc: '-'},
-    {id: 1, title: 'Privacy Policy', desc: '-'},
-    {id: 1, title: 'Terms and Condition', desc: '-'},
+    {id: 0, title: 'Change Password', navigate: 'ChangePassword'},
+    {id: 1, title: 'Privacy Policy', navigate: 'PrivacyPolicy'},
+    {id: 1, title: 'Terms and Condition', navigate: 'TermsAndCondition'},
   ]
 }
 
@@ -21,14 +21,7 @@ export default class ViewDokumen extends Component {
   }
   
   static navigationOptions = ({navigation}) => ({
-    title: 'Dokumen',
-    headerRight: (
-      <Button color='primary' onPress={() => navigation.navigate('Home')}>
-        <View padding={[0, theme.sizes.base]}>
-          <Icon name={'add'} size={theme.sizes.base*1.5} color={'white'}/>
-        </View>
-      </Button>
-    ),
+    title: 'Settings',
   })
 
   async componentDidMount(){
@@ -42,20 +35,23 @@ export default class ViewDokumen extends Component {
   }
 
   render() {
+    const {navigate} = this.props.navigation
     return (
-      <FlatList
-        data={helper.keterampilan}
-        renderItem={({item, index}) =>
-          <Touch>
-            <View key={item.id} padding={theme.sizes.base} center row space={'between'}>
-              <Text>{item.title}</Text>
-              <Icon name={'chevron-right'} size={theme.sizes.base*1.5}/>
-            </View>
-          </Touch>
-        }
-        keyExtractor={item => item.id}
-        ItemSeparatorComponent={() => <View height={1} color={theme.colors.black_t90}/>}
-      />
+      <View style={styles.parent}>
+        <FlatList
+          data={helper.keterampilan}
+          renderItem={({item, index}) =>
+            <Touch onPress={() => navigate(item.navigate)}>
+              <View key={item.id} padding={theme.sizes.base} center row space={'between'}>
+                <Text>{item.title}</Text>
+                <Icon name={'chevron-right'} size={theme.sizes.base*1.5}/>
+              </View>
+            </Touch>
+          }
+          keyExtractor={item => item.id}
+          ItemSeparatorComponent={() => <View height={1} color={theme.colors.black_t90}/>}
+        />
+      </View>
     )
   }
 }

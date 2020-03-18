@@ -8,7 +8,7 @@ import { theme } from '../constants';
 import {NavigationAction} from 'react-navigation'
 
 import Login from '../screen/auth/Login'
-import Signup from '../screen/auth/Signup'
+// import Signup from '../screen/auth/Signup'
 import Forget from '../screen/auth/Forget'
 import Otp from '../screen/auth/Otp'
 
@@ -42,6 +42,10 @@ import {
 } from '../screen/index'
 
 import {
+  PrivacyPolicy,
+  TermsAndCondition,
+  ChangePassword,
+  Settings,
   ViewRiwayatPekerjaan,
   ViewRiwayatKesehatan,
   ViewData,
@@ -117,7 +121,7 @@ const titleStyle = {
 
 const authStack = createStackNavigator({
   Login,
-  Signup,
+  // Signup,
   Forget,
   Otp,
 },{
@@ -300,6 +304,10 @@ const indexBottomTab = createBottomTabNavigator({
 })
 
 const indexStack = createStackNavigator({
+  Settings,
+  TermsAndCondition,
+  PrivacyPolicy,
+  ChangePassword,
   indexBottomTab:{
     screen: indexBottomTab,
     navigationOptions: {

@@ -9,16 +9,16 @@ import _ from 'lodash'
 const helper = [
   {id: 0, title: 'List Foto', navigate: ''},
   {id: 1, title: 'View Profile', navigate: 'ViewProfile'},
-  {id: 2, title: 'View General Info', navigate: ''},
-  {id: 3, title: 'Keterampilan Kerja', navigate: ''},
-  {id: 4, title: 'Riwayat Kesehatan', navigate: ''},
-  {id: 5, title: 'Dokumen', navigate: ''},
-  {id: 6, title: 'Riwayat Pekerjaan', navigate: ''},
+  {id: 2, title: 'View General Info', navigate: 'ViewGeneral'},
+  {id: 3, title: 'Keterampilan Kerja', navigate: 'ViewKeterampilan'},
+  {id: 4, title: 'Riwayat Kesehatan', navigate: 'ViewRiwayatKesehatan'},
+  {id: 5, title: 'Riwayat Pekerjaan', navigate: 'ViewRiwayatPekerjaan'},
+  {id: 6, title: 'Dokumen', navigate: 'ViewDokumen'},
 ]
 
 const majikan = [
-  {id: 0, title: 'View Profile', navigate: ''},
-  {id: 1, title: 'Dokumen', navigate: ''},
+  {id: 0, title: 'View Profile', navigate: 'ViewProfile'},
+  {id: 1, title: 'Dokumen', navigate: 'ViewDokumen'},
 ]
 
 
