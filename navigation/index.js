@@ -42,6 +42,7 @@ import {
 } from '../screen/index'
 
 import {
+  Verifikasi,
   PrivacyPolicy,
   TermsAndCondition,
   ChangePassword,
@@ -304,16 +305,17 @@ const indexBottomTab = createBottomTabNavigator({
 })
 
 const indexStack = createStackNavigator({
-  Settings,
-  TermsAndCondition,
-  PrivacyPolicy,
-  ChangePassword,
+  Verifikasi,
   indexBottomTab:{
     screen: indexBottomTab,
     navigationOptions: {
       headerShown: false
     }
   },
+  Settings,
+  TermsAndCondition,
+  PrivacyPolicy,
+  ChangePassword,
   ViewRiwayatPekerjaan,
   ViewRiwayatKesehatan,
   ViewDokumen,

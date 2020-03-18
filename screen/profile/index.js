@@ -7,9 +7,11 @@ import ViewRiwayatKesehatan from './ViewRiwayatKesehatan'
 import ViewRiwayatPekerjaan from './ViewRiwayatPekerjaan'
 import Settings from './Settings'
 import ChangePassword from './ChangePassword'
+import Verifikasi from './Verifikasi'
 import {PrivacyPolicy, TermsAndCondition} from './PolicyAndTerms'
 
 export {
+  Verifikasi,
   PrivacyPolicy,
   TermsAndCondition,
   ChangePassword,

@@ -58,10 +58,12 @@ export default class Input extends Component {
     const { rightLabel, rightStyle, onRightPress } = this.props;
 
     if (!rightLabel) return null;
-
-    return (
+    return(
+      (typeof rightLabel === 'string') ?
       <Text color='gray' style={{position: 'absolute', right: theme.sizes.base, bottom: theme.sizes.base*.5}}>{rightLabel}</Text>
-    );
+      :
+      rightLabel
+    ) 
   }
 
   isError(){

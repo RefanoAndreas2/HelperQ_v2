@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, ScrollView, Image, FlatList, AsyncStorage, Dimensions } from 'react-native'
+import { StyleSheet, ScrollView, Image, FlatList, AsyncStorage, Dimensions, Alert } from 'react-native'
 import { Text, View, GlobalStyle, Button, CustomInput, Touch } from '../../components'
 import { theme, mocks } from '../../constants';
 import { AirbnbRating } from 'react-native-ratings';
@@ -27,6 +27,7 @@ export default class ViewData extends Component {
     super(props);
     this.state = {
       async_role: '',
+      verified: false
     };
   }
 
@@ -42,6 +43,26 @@ export default class ViewData extends Component {
     } catch (e) {
       console.error(e)
     }
+  }
+
+  topButton(role, verified){
+    console.log(verified)
+    role == 'majikan' ?
+      this.props.navigation.navigate('Home')
+    :
+    verified ?
+      this.props.navigation.navigate('Home')
+    :
+      Alert.alert(
+        'Verfikasi',
+        'Lanjutkan ke proses verifikasi?',
+        [
+        // {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+          {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel',},
+          {text: 'Lanjutkan', onPress: () => this.props.navigation.navigate('Verifikasi')},
+        ],
+        {cancelable: false},
+      )
   }
   
   render() {
@@ -63,10 +84,10 @@ export default class ViewData extends Component {
             <Text title ellipsizeMode={'tail'} numberOfLines={1}>Nama</Text>
             <Text caption italic ellipsizeMode={'tail'} numberOfLines={1}>Not Verified</Text>
             <View marginTop={theme.sizes.base*.5}>
-              <Button smallHeight color={'primary'} onPress={() => navigate('ViewData')}>
+              <Button smallHeight color={'primary'} onPress={() => this.topButton(this.state.async_role, this.state.verified)}>
                 <View>
                   <Text white bold center >
-                    {this.state.async_role=='helper' ? 'Verifikasi akun' : 'Ganti Foto'}
+                    {this.state.async_role=='helper' ? this.state.verified ? 'Lihat Order Verifikasi':'Verifikasi Akun' : 'Ganti Foto'}
                   </Text>
                 </View>
               </Button>

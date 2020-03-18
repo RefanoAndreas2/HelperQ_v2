@@ -776,12 +776,6 @@ class UploadFotoProfil extends Component {
       'Disimpan',
       'Terima kasih telah mengisi data, anda bisa melanjutkan ke halaman utama',
       [
-        // {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-        // {
-        //   text: 'Cancel',
-        //   onPress: () => console.log('Cancel Pressed'),
-        //   style: 'cancel',
-        // },
         {text: 'Lanjutkan', onPress: () => this.props.navigation.navigate('Home')},
       ],
       {cancelable: false},
