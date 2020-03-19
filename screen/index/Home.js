@@ -17,7 +17,7 @@ function List({item, context}) {
             <View>
               <View flex={1}>
                 <Image
-                  source={{uri: 'https://source.unsplash.com/random'}}
+                  source={{uri: 'https://source.unsplash.com/random/?people'}}
                   style={{
                     flex: 1,
                     borderRadius: theme.sizes.base*.5}}

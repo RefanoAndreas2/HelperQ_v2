@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, ScrollView, Image, FlatList, AsyncStorage, Dimensions, Alert, TouchableWithoutFeedback } from 'react-native'
+import { StyleSheet, ScrollView, Image, FlatList, AsyncStorage, Dimensions, Alert, Modal, TouchableWithoutFeedback } from 'react-native'
 import { Text, View, GlobalStyle, Button, CustomInput, Touch } from '../../components'
 import { theme, mocks } from '../../constants';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -36,7 +36,7 @@ class RadioButtons extends Component {
 					);
 				})}
 			</View>
-		);
+		)
 	}
 }
 
@@ -45,15 +45,18 @@ export default class Verifikasi extends Component {
     super(props);
     this.inputs = {}
     this.state = {
-      selectedOption: ''
+      selectedOption: '',
+      modal: false
     };
   }
+
   setSelectedOption(selectedOption){
     console.log(selectedOption)
     this.setState({
       selected
-    });
+    })
   }
+
   render() {
     const options = [
       {key: 0, title: 'Mitra HelperQ Bandung', addr: 'Deskripsi Alamat'},
@@ -62,7 +65,7 @@ export default class Verifikasi extends Component {
       {key: 3, title: 'Mitra HelperQ Jakarta', addr: 'Deskripsi Alamat'},
       {key: 4, title: 'Mitra HelperQ Batam', addr: 'Deskripsi Alamat'},
     ];
-
+    const {navigate} = this.props.navigation
     return (
       <View style={styles.parent}>
         <View padding={theme.sizes.base}>
@@ -88,11 +91,37 @@ export default class Verifikasi extends Component {
           />
         </ScrollView>
         <View padding={theme.sizes.base}>
-          <Button color={'primary'}>
+          <Button color={'primary'} onPress={()=>this.setState({modal: !this.state.modal})}>
             <Text white center bold>Lanjut</Text>
           </Button>
         </View>
-
+        <Modal
+        transparent={true}
+        visible={this.state.modal}
+        onRequestClose={() => this.setState({modal: !this.state.modal})}
+        >
+          <View flex={1} middle color='backdrop'>
+            <View margin={theme.sizes.base*1.5} padding={[theme.sizes.base*1.5, theme.sizes.base*.5, theme.sizes.base*.5, theme.sizes.base*1.5]} color={'white'} radius={theme.sizes.radius}>
+              <View marginBottom={theme.sizes.base*1.5}>
+                <Text title>Terima Kasih</Text>
+              </View>
+              <View paddingRight={theme.sizes.base}>
+                <Text>Silahkan mengunjungi Mitra HelperQ kami sesuai informasi di bawah ini untuk melakukan verifikasi</Text>
+              </View>
+              <View marginTop={theme.sizes.base} paddingRight={theme.sizes.base}>
+                <Text bold>MitraQ HelperQ [Kota]</Text>
+                <Text lilbit>[Alamat Mitra]</Text>
+              </View>
+              <View wrap row right marginTop={theme.sizes.base}>
+                <Button onPress={() => this.setState({modal: !this.state.modal})||navigate('ViewData', {title: 'Detail Helper'})}>
+                  <View padding={theme.sizes.base*1.5}>
+                    <Text bold primary>Lanjutkan</Text>
+                  </View>
+                </Button>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     )
   }

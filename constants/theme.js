@@ -5,7 +5,9 @@ const fontFamily_src = {
 }
 const colors = {
   primary: "#4285F4",
+  // primary: "#ef425e",
   primary_light: "#75A6F7",
+  // primary_light: "#ef425e80",
   primary_dark: "#3161B2",
   secondary: "#BC298F",
   secondary_light: "#CE63AD",

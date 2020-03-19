@@ -19,7 +19,7 @@ function ListHelperItem({item, context}){
   const {navigate} = context.props.navigation
   return(
     <View style={styles.listTouch}>
-      <Touch onPress={() => navigate('DetailOrder', {navigateFrom: 'OrderListHelper'})}>
+      <Touch onPress={() => navigate('KontrakKerja', {navigateFrom: 'OrderListHelper'})}>
         <View color={'white'} style={styles.border}>
           <View row padding={theme.sizes.base*.5}>
             <View>
@@ -47,7 +47,7 @@ function ListKontrakItem({item, context}){
   const {navigate} = context.props.navigation
   return(
     <View style={styles.listTouch}>
-      <Touch onPress={() => navigate('DetailOrder', {navigateFrom: 'OrderKontrakKerja', statusKontrak: item.statusKontrak})}>
+      <Touch onPress={() => navigate('KontrakKerja', {navigateFrom: 'OrderKontrakKerja', statusKontrak: item.statusKontrak})}>
         <View wrap color={'white'} style={styles.border}>
           <View row padding={theme.sizes.base*.5}>
             <View style={{aspectRatio: 1}}>

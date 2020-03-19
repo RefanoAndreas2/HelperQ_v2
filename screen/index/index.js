@@ -3,14 +3,14 @@ import { Filter, Notification } from './FilterNotif'
 import { OrderListHelper, OrderKontrakKerja } from './Order'
 import { Payment, CheckOut, PaymentGateway } from './Payment'
 import { ProfileHelper, ProfileMajikan, ProfileContent } from './Profile'
-import { DetailOrder, ReviewRating } from './DetailOrder'
+import { KontrakKerja, ReviewRating } from './KontrakDanRating'
 import DetailHelper from './DetailHelper'
 
 export {
   AllList,
   CheckOut,
   DetailHelper,
-  DetailOrder,
+  KontrakKerja,
   Filter,
   Notification,
   OrderKontrakKerja,

@@ -28,7 +28,6 @@ import {
   AllList,
   CheckOut,
   DetailHelper,
-  DetailOrder,
   Filter,
   Notification,
   OrderKontrakKerja,
@@ -39,6 +38,7 @@ import {
   ProfileMajikan,
   ReviewRating,
   Verified,
+  KontrakKerja
 } from '../screen/index'
 
 import {
@@ -69,14 +69,16 @@ const materialTopTabStyle = {
       backgroundColor: theme.colors.white
     },
     style: {
-      backgroundColor: theme.colors.primary
+      backgroundColor: theme.colors.primary,
     },
     tabStyle: {
+      elevation: 9
       // backgroundColor: 'white'
     },
     labelStyle: {
       fontWeight: 'bold'
-    }
+    },
+
   },
   defaultNavigationOptions: {
     // swipeEnabled: false,
@@ -160,7 +162,26 @@ const homeTab = createMaterialTopTabNavigator({
     }
   },
   Verified
-}, materialTopTabStyle
+},{
+  sceneContainerStyle: {
+    backgroundColor: 'white'
+  },
+  tabBarOptions:{
+    style: {
+      backgroundColor: 'white',
+      shadowColor: theme.colors.danger,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      // elevation: 20,
+    },
+    tabStyle: {
+    }
+  }
+  // defaultNavigationOptions: {
+  // }
+  // materialTopTabStyle
+}
 )
 
 const homeStack = createStackNavigator({
@@ -297,7 +318,7 @@ const indexBottomTab = createBottomTabNavigator({
     }
   },
 },{
-  initialRouteName: 'Profile',
+  initialRouteName: 'Home',
   tabBarOptions: {
     showIcon: true,
     activeTintColor: theme.colors.primary
@@ -305,13 +326,14 @@ const indexBottomTab = createBottomTabNavigator({
 })
 
 const indexStack = createStackNavigator({
-  Verifikasi,
   indexBottomTab:{
     screen: indexBottomTab,
     navigationOptions: {
       headerShown: false
     }
   },
+  KontrakKerja,
+  Verifikasi,
   Settings,
   TermsAndCondition,
   PrivacyPolicy,
@@ -323,7 +345,6 @@ const indexStack = createStackNavigator({
   ViewKeterampilan,
   ViewGeneral,
   ReviewRating,
-  DetailOrder,
   Filter,
   Notification,
   DetailHelper,

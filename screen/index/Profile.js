@@ -8,7 +8,7 @@ import _ from 'lodash'
 
 const menuList = [
   {id: 0, title: 'List Majikan', role: ['helper'], navigate: ''},
-  {id: 1, title: 'Kontrak Kerja', role: ['helper'], navigate: ''},
+  {id: 1, title: 'Kontrak Kerja', role: ['helper'], navigate: 'KontrakKerja',  params: {navigateFrom: 'Profile', statusKontrak: 'Aktif'}},
   {id: 2, title: 'Kode Referal', role: ['helper', 'majikan'], navigate: ''},
   {id: 3, title: 'Settings', role: ['helper', 'majikan'], navigate: 'Settings'},
   {id: 4, title: 'Sign Out', role: ['helper', 'majikan'], navigate: ''},
@@ -120,7 +120,7 @@ class ProfileContent extends Component {
           <FlatList
             data={list}
             renderItem={({item}) => 
-              <Touch onPress={() => null}>
+              <Touch onPress={() => navigate(item.navigate, item.params)}>
                 <View row color={'white'} padding={theme.sizes.base}>
                   <View flex={1} paddingLeft={theme.sizes.base*.5}>
                     <Text>{item.title}</Text>
