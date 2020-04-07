@@ -1,8 +1,8 @@
-import { AllList, Verified } from './Home'
+import { AllList, Verified, MainHome } from './Home'
 import { Filter, Notification } from './FilterNotif'
 import { OrderListHelper, OrderKontrakKerja } from './Order'
 import { Payment, CheckOut, PaymentGateway } from './Payment'
-import { ProfileHelper, ProfileMajikan, ProfileContent } from './Profile'
+import { ProfileHelper, ProfileMajikan, ProfileContent, MainProfile } from './Profile'
 import { KontrakKerja, ReviewRating } from './KontrakDanRating'
 import DetailHelper from './DetailHelper'
 
@@ -20,6 +20,8 @@ export {
   ProfileContent,
   ProfileHelper,
   ProfileMajikan,
+  MainProfile,
   ReviewRating,
   Verified,
+  MainHome
 }

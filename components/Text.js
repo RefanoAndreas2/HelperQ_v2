@@ -13,6 +13,7 @@ export default class Typography extends Component {
       title,
       body,
       lilbit,
+      upbit,
       caption,
       small,
       size,
@@ -57,6 +58,7 @@ export default class Typography extends Component {
       title && styles.title,
       body && styles.body,
       lilbit && styles.lilbit,
+      upbit && styles.upbit,
       caption && styles.caption,
       small && styles.small,
       size && { fontSize: size },
@@ -140,6 +142,7 @@ const styles = StyleSheet.create({
   title: theme.fonts.title,
   body: theme.fonts.body,
   lilbit: theme.fonts.lilbit,
+  upbit: theme.fonts.upbit,
   caption: theme.fonts.caption,
   small: theme.fonts.small
 });

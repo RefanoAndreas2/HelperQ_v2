@@ -118,25 +118,27 @@ export default class Input extends Component {
       : "default";
     
     return (
-      <View flex={false} margin={[theme.sizes.base / 2, 0]}>
+      <View>
         {this.renderLabel()}
         {/* {this.isError()} */}
-        <TextInput
-          multiline={multiline}
-          style={inputStyles}
-          secureTextEntry={isSecure}
-          autoComplete="off"
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType={inputType}
-          ref={input => this.textInput = input}
-          onSubmitEditing={this.onSubmitEditing.bind(this)}
-          onFocus={() => this.onFocus()}
-          onBlur={() => this.onBlur()}
-          {...props}
-        />
-        {this.renderRight()}
-        {/* {this.renderToggle()} */}
+        <View row>
+          <TextInput
+            multiline={multiline}
+            style={inputStyles}
+            secureTextEntry={isSecure}
+            autoComplete="off"
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType={inputType}
+            ref={input => this.textInput = input}
+            onSubmitEditing={this.onSubmitEditing.bind(this)}
+            onFocus={() => this.onFocus()}
+            onBlur={() => this.onBlur()}
+            {...props}
+          />
+          {this.renderRight()}
+          {/* {this.renderToggle()} */}
+        </View>
       </View>
     );
   }
@@ -144,6 +146,7 @@ export default class Input extends Component {
 
 const styles = StyleSheet.create({
   input: {
+    flex: 1,
     // borderWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: 1,
     // borderColor: theme.colors.black,
@@ -151,8 +154,8 @@ const styles = StyleSheet.create({
     fontSize: theme.sizes.font,
     // fontWeight: "500",
     color: theme.colors.black,
-    height: theme.sizes.base * 2.5,
-    paddingHorizontal: theme.sizes.base*.75 
+    height: theme.sizes.base * 3,
+    paddingHorizontal: theme.sizes.base
   },
   toggle: {
     position: "absolute",

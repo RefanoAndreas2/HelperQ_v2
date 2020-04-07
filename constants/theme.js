@@ -4,12 +4,15 @@ const fontFamily_src = {
   Bold: require('../assets/fonts/Roboto-Bold.ttf')
 }
 const colors = {
-  primary: "#4285F4",
+  primary: "#3e79bd",
+  // primary: "#4285F4",
   // primary: "#ef425e",
   primary_light: "#75A6F7",
   // primary_light: "#ef425e80",
-  primary_dark: "#3161B2",
-  secondary: "#BC298F",
+  // primary_dark: "#3161B2",
+  primary_dark: "#4077BA",
+  // secondary: "#BC298F",
+  secondary: "#EF425E",
   secondary_light: "#CE63AD",
   secondary_dark: "#891E69",
   // accent: "#F3534A",
@@ -20,6 +23,7 @@ const colors = {
   black_t30: "#545066",
   black_t60: "#94919F",
   black_t90: "#D4D3D8",
+  bgParent: "#F7F7F7",
   backdrop: "#000000B3",
   danger: "#D72638",  
   danger_light: "#E1616E",
@@ -47,6 +51,7 @@ const sizes = {
   h2: 24,
   h3: 20,
   title: 20,
+  upbit: 18,
   body: 16,
   lilbit: 14,
   caption: 12,
@@ -85,6 +90,10 @@ const fonts = {
   lilbit: {
     // fontFamily: 'Regular',
     fontSize: sizes.lilbit
+  },
+  upbit: {
+    // fontFamily: 'Regular',
+    fontSize: sizes.upbit
   },
   small: {
     // fontFamily: 'Regular',

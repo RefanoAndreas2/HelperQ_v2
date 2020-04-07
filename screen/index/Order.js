@@ -18,23 +18,29 @@ function Separator(){
 function ListHelperItem({item, context}){
   const {navigate} = context.props.navigation
   return(
-    <View style={styles.listTouch}>
+    <View ovHidden shadow radius={theme.sizes.base/2} margin={[0, theme.sizes.base]}>
       <Touch onPress={() => navigate('KontrakKerja', {navigateFrom: 'OrderListHelper'})}>
-        <View color={'white'} style={styles.border}>
+        <View color={'white'} >
           <View row padding={theme.sizes.base*.5}>
             <View>
               <Image
                 source={{uri: 'https://source.unsplash.com/random'}}
                 style={{
+                  width: theme.sizes.base*6,
                   aspectRatio: 1,
                   borderRadius: theme.sizes.base*.5}}
               />
-              <AirbnbRating showRating={false} size={theme.sizes.base*.5} isDisabled={true} defaultRating={item.rating} count={5}/>
             </View>
-            <View flex={1} marginLeft={theme.sizes.base}>
-              <Text ellipsizeMode={'tail'} bold numberOfLines={1}>{item.nama}</Text>
-              <Text caption>{item.lokasi}</Text>
-              <Text caption>{item.pekerjaan}</Text>
+            <View flex={1} marginLeft={theme.sizes.base/2}>
+              <View wrap>
+                <AirbnbRating showRating={false} size={theme.sizes.base*.75} isDisabled={true} defaultRating={item.rating} count={5}/>
+              </View>
+              <Text ellipsizeMode={'tail'} upbit bold numberOfLines={1}>{item.nama}</Text>
+              <Text caption >{item.pekerjaan}</Text>
+              <View row center marginTop={theme.sizes.base/4}>
+                <MDIcon name={'place'} size={theme.sizes.lilbit} style={{marginRight: theme.sizes.base/4}} />
+                <Text caption>{item.lokasi}</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -46,31 +52,30 @@ function ListHelperItem({item, context}){
 function ListKontrakItem({item, context}){
   const {navigate} = context.props.navigation
   return(
-    <View style={styles.listTouch}>
+    <View radius={theme.sizes.base/2} color={'white'} shadow ovHidden margin={[0, theme.sizes.base]}>
       <Touch onPress={() => navigate('KontrakKerja', {navigateFrom: 'OrderKontrakKerja', statusKontrak: item.statusKontrak})}>
-        <View wrap color={'white'} style={styles.border}>
-          <View row padding={theme.sizes.base*.5}>
-            <View style={{aspectRatio: 1}}>
-              <Image
-                source={{uri: 'https://source.unsplash.com/random'}}
-                style={{
-                  aspectRatio: 1,
-                  borderRadius: theme.sizes.base*.5
-                }}
-              />
+        <View row padding={theme.sizes.base*.5}>
+          <View>
+            <Image
+              source={{uri: 'https://source.unsplash.com/random'}}
+              style={{
+                width: theme.sizes.base*6,
+                aspectRatio: 1,
+                borderRadius: theme.sizes.base*.5
+              }}
+            />
+          </View>
+          <View flex={1} marginLeft={theme.sizes.base/2}>
+            <View wrap>
+              <Badge status={item.statusKontrak}>
+                {item.statusKontrak}
+              </Badge>
             </View>
-            <View flex={1} marginLeft={theme.sizes.base}>
-              <View wrap>
-                {/* <View padding={[theme.sizes.base*.25, theme.sizes.base*.5]} color={theme.colors.primary_light} radius={theme.sizes.base*.25}>
-                  <Text small white bold>Gaji : Rp. {item.gaji}</Text>
-                </View> */}
-                <Badge status={item.statusKontrak}>
-                  {item.statusKontrak}
-                </Badge>
-              </View>
-              <Text ellipsizeMode={'tail'} bold numberOfLines={1}>{item.nama}</Text>
+            <Text ellipsizeMode={'tail'} upbit bold numberOfLines={1}>{item.nama}</Text>
+            <Text caption>{item.pekerjaan}</Text>
+            <View row center marginTop={theme.sizes.base/4}>
+              <MDIcon name={'place'} size={theme.sizes.base} />
               <Text caption>{item.lokasi}</Text>
-              <Text caption>{item.pekerjaan}</Text>
             </View>
           </View>
         </View>
@@ -118,14 +123,15 @@ class OrderListHelper extends Component {
     return (
       <View style={styles.parent}>
         <ScrollView stickyHeaderIndices={[0]} onScroll={this._onScroll}>
-          <View padding={theme.sizes.base} color={'white'} row space={'between'}>
-            <Button smallHeight color={'primary'}>
-              <View row padding={theme.sizes.base*.5}>
-                <MDIcon name={'sort'} size={24} color={'white'}/>
-                <Text white bold style={{marginHorizontal: theme.sizes.base*.5}}>Sort</Text>
+          <View padding={theme.sizes.base} center color={theme.colors.bgParent} row space={'between'}>
+            <Text lilbit >Total 10  Calon Helper</Text>
+
+            <Button smallHeight color={'secondary'}>
+              <View row center padding={theme.sizes.base*.5}>
+                <Text white lilbit style={{marginHorizontal: theme.sizes.base*.5}}>Paling Baru</Text>
+                <MDIcon name={'arrow-drop-down'} size={24} color={'white'}/>
               </View>
             </Button>
-            <Text>10 Helper</Text>
           </View>
           <FlatList
             data={listHelper}
@@ -138,7 +144,7 @@ class OrderListHelper extends Component {
             ListFooterComponent={() => <Separator />}
           />
         </ScrollView>
-        {this.state.isActionButtonVisible ? 
+        {/* {this.state.isActionButtonVisible ? 
           <ActionButton
             offsetX={theme.sizes.base}
             offsetY={theme.sizes.base}
@@ -146,7 +152,7 @@ class OrderListHelper extends Component {
             buttonColor={theme.colors.whatsapp}
             onPress={() => { console.log("hi")}}
           />
-        : null}
+        : null} */}
       </View>
     )
   }
@@ -191,14 +197,14 @@ class OrderKontrakKerja extends Component {
     return (
       <View style={styles.parent}>
         <ScrollView stickyHeaderIndices={[0]} onScroll={this._onScroll}>
-          <View padding={theme.sizes.base} color={'white'} row space={'between'}>
-            <Button smallHeight color={'primary'}>
-              <View row padding={theme.sizes.base*.5}>
-                <MDIcon name={'sort'} size={24} color={'white'}/>
-                <Text white bold style={{marginHorizontal: theme.sizes.base*.5}}>Sort</Text>
+          <View padding={theme.sizes.base} center color={theme.colors.bgParent} row space={'between'}>
+            <Text lilbit >Total 10  Calon Helper</Text>
+            <Button smallHeight color={'secondary'}>
+              <View row center padding={theme.sizes.base*.5}>
+                <Text white lilbit style={{marginHorizontal: theme.sizes.base*.5}}>Paling Baru</Text>
+                <MDIcon name={'arrow-drop-down'} size={24} color={'white'}/>
               </View>
             </Button>
-            <Text>10 Helper</Text>
           </View>
           <FlatList
             data={listHelper}
@@ -211,7 +217,7 @@ class OrderKontrakKerja extends Component {
             ListFooterComponent={() => <Separator />}
           />
         </ScrollView>
-        {this.state.isActionButtonVisible ? 
+        {/* {this.state.isActionButtonVisible ? 
           <ActionButton
             offsetX={theme.sizes.base}
             offsetY={theme.sizes.base}
@@ -219,7 +225,7 @@ class OrderKontrakKerja extends Component {
             buttonColor={theme.colors.whatsapp}
             onPress={() => { console.log("hi")}}
           />
-        : null}
+        : null} */}
       </View>
     )
   }
@@ -230,7 +236,7 @@ export {OrderListHelper, OrderKontrakKerja}
 const styles = StyleSheet.create({
   parent: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: theme.colors.bgParent
   },
   listTouch: {
     marginHorizontal: theme.sizes.base,

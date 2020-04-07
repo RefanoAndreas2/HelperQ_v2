@@ -3,7 +3,7 @@ import { StyleSheet, TouchableHighlight, TouchableOpacity, Dimensions } from 're
 import { createAppContainer, createSwitchNavigator} from "react-navigation"
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs'
-import { Text, View, GlobalStyle, Button, CustomInput } from '../components'
+import { Text, View, GlobalStyle, Button, CustomInput, Touch} from '../components'
 import { theme } from '../constants';
 import {NavigationAction} from 'react-navigation'
 
@@ -26,6 +26,7 @@ import {
 
 import { 
   AllList,
+  MainHome,
   CheckOut,
   DetailHelper,
   Filter,
@@ -36,6 +37,7 @@ import {
   PaymentGateway,
   ProfileHelper,
   ProfileMajikan,
+  MainProfile,
   ReviewRating,
   Verified,
   KontrakKerja
@@ -185,42 +187,12 @@ const homeTab = createMaterialTopTabNavigator({
 )
 
 const homeStack = createStackNavigator({
-  homeTab
+  // homeTab
+  MainHome
 },{
-  defaultNavigationOptions: ({navigation}) => ({
-    headerTitle: (
-      <Button color='white'>
-        <View row padding={[0, theme.sizes.base]}>
-          <Icon name={'search'} size={24} color={theme.colors.black_t60} />
-          <View paddingLeft={theme.sizes.base}>
-            <Text color={theme.colors.black_t60}>Cari Pekerja / Pekerjaan</Text>
-          </View>
-        </View>
-      </Button>
-
-    ),
-    headerRight: (
-      <View row>
-        <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Filter')}>
-          <Icon name={'filter-list'} size={24} color={'white'} />
-        </TouchableOpacity>
-        <View padding={theme.sizes.base*.5}/>
-        <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Notification')}>
-          <Icon name={'notifications'} size={24} color={'white'} />
-        </TouchableOpacity>
-      </View>
-    ),
-    headerTitleContainerStyle:{
-      width: Dimensions.get('window').width-theme.sizes.base*7
-    },
-    headerRightContainerStyle:{
-      marginRight: theme.sizes.base
-    },
-    headerStyle:{
-      elevation: 0,
-      backgroundColor: theme.colors.primary
-    }
-  })
+  defaultNavigationOptions: {
+    headerShown:false
+  }
 })
 
 const orderTab = createMaterialTopTabNavigator({
@@ -236,7 +208,43 @@ const orderTab = createMaterialTopTabNavigator({
       title: 'Kontrak Kerja'
     }
   }
-}, materialTopTabStyle
+}, {
+  tabBarOptions: {
+    // contentContainerStyle:{
+    //   padding: theme.sizes.base,
+    //   // backgroundColor: theme.colors.bgParent,
+    // },
+    tabStyle: {
+      // backgroundColor: theme.colors.white,
+    },
+    activeTintColor: 'white',
+    inactiveTintColor: theme.colors.black_t90,
+    indicatorStyle: {
+      position: 'absolute',
+      right: 0,
+      bottom: 0,
+      left: 0,
+      flex: 1,
+      padding: theme.sizes.base*1.5,
+      backgroundColor: theme.colors.primary_dark,
+      borderRadius: theme.sizes.base/2
+    },
+    labelStyle:{
+      fontSize: theme.sizes.base,
+      fontWeight: 'bold',
+      textTransform: 'capitalize'
+    },
+    style: {
+      margin: theme.sizes.base,
+      marginBottom: 0,
+      backgroundColor: 'white',
+      elevation: 0,
+      borderRadius: theme.sizes.base/2,
+      overflow: 'hidden',
+    }
+}, style: {
+  backgroundColor: theme.colors.bgParent
+}}
 )
 
 const orderStack = createStackNavigator({
@@ -261,7 +269,7 @@ const orderStack = createStackNavigator({
     headerStyle:{
       elevation: 0,
       backgroundColor: theme.colors.primary
-    }
+    },
   }
 })
 
@@ -282,12 +290,29 @@ const profileTab = createMaterialTopTabNavigator({
 
 const profileStack = createStackNavigator({
   profileTab:{
-    screen: profileTab,
+    screen: MainProfile,
     navigationOptions: {
-      title: 'Profile'
+      title: 'Profile',
+      headerTitleStyle:{
+        fontWeight: 'bold',
+        color: theme.colors.primary
+      },
+      headerRight: () =>
+      <View row color={'secondary'} wrap radius={theme.sizes.radius} marginRight={theme.sizes.base
+      }>
+        <Touch containerStyle={{padding: theme.sizes.base/2}} ripple={'white'}>
+          <Icon name={'notifications'} size={24} color={'white'} />
+        </Touch>
+        {/* <TouchableOpacity activeOpacity={0.5} onPress={() => null}>
+        </TouchableOpacity> */}
+      </View>
     }
   }
-},titleAndNotifStyle)
+},{
+  defaultNavigationOptions: {
+
+  }
+})
 
 const indexBottomTab = createBottomTabNavigator({
   Home: {
@@ -318,14 +343,15 @@ const indexBottomTab = createBottomTabNavigator({
     }
   },
 },{
-  initialRouteName: 'Home',
+  initialRouteName: 'Profile',
   tabBarOptions: {
     showIcon: true,
-    activeTintColor: theme.colors.primary
+    activeTintColor: theme.colors.secondary
   }
 })
 
 const indexStack = createStackNavigator({
+  DetailHelper,
   indexBottomTab:{
     screen: indexBottomTab,
     navigationOptions: {
@@ -347,7 +373,6 @@ const indexStack = createStackNavigator({
   ReviewRating,
   Filter,
   Notification,
-  DetailHelper,
   PaymentGateway,
   CheckOut,
   Payment,

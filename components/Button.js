@@ -37,7 +37,8 @@ class Button extends Component {
     ];
     
     return (
-      (Platform.OS === 'ios' ? 
+      (Platform.OS === 'ios' ?
+      <View radius={theme.sizes.radius} ovHidden>
         <TouchableOpacity
           style={buttonStyles}
           activeOpacity={opacity || 0.8}
@@ -45,12 +46,15 @@ class Button extends Component {
         >
           {children}
         </TouchableOpacity>
+      </View>
       :
+      <View radius={theme.sizes.radius} ovHidden>
         <TouchableNativeFeedback useForeground background={TouchableNativeFeedback.Ripple(ripple, borderless)} {...props}>
           <View style={[buttonStyles]}>
             {children}
           </View>
         </TouchableNativeFeedback>
+      </View>
       )
     );
   }

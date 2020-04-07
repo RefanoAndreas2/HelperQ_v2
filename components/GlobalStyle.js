@@ -10,7 +10,7 @@ export default StyleSheet.create({
   },
   parent: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: theme.colors.bgParent
   },
   listTouch: {
     marginHorizontal: theme.sizes.base,
