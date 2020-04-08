@@ -40,7 +40,8 @@ import {
   MainProfile,
   ReviewRating,
   Verified,
-  KontrakKerja
+  KontrakKerja,
+  PaymentStatus
 } from '../screen/index'
 
 import {
@@ -351,7 +352,8 @@ const indexBottomTab = createBottomTabNavigator({
 })
 
 const indexStack = createStackNavigator({
-  DetailHelper,
+  PaymentStatus,
+  Payment,
   indexBottomTab:{
     screen: indexBottomTab,
     navigationOptions: {
@@ -360,10 +362,12 @@ const indexStack = createStackNavigator({
   },
   KontrakKerja,
   Verifikasi,
+  DetailHelper,
   Settings,
   TermsAndCondition,
   PrivacyPolicy,
   ChangePassword,
+  CheckOut,
   ViewRiwayatPekerjaan,
   ViewRiwayatKesehatan,
   ViewDokumen,
@@ -374,8 +378,6 @@ const indexStack = createStackNavigator({
   Filter,
   Notification,
   PaymentGateway,
-  CheckOut,
-  Payment,
 
   //Profile
   ViewData,

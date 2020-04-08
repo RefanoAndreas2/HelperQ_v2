@@ -1,157 +1,241 @@
-import React, { Component } from 'react'
-import { StyleSheet, ScrollView, Image, TouchableWithoutFeedback, FlatList, Alert } from 'react-native'
-import { Text, View, GlobalStyle, Badge, Button, CustomInput, Touch } from '../../components'
-import { theme, mocks } from '../../constants';
-import { RadioButtons, SegmentedControls } from 'react-native-radio-buttons'
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { StackActions, NavigationActions } from 'react-navigation';
+import React, { Component } from "react";
+import {
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableWithoutFeedback,
+  FlatList,
+  Alert,
+} from "react-native";
+import {
+  Text,
+  View,
+  GlobalStyle,
+  Badge,
+  Button,
+  CustomInput,
+  Touch,
+} from "../../components";
+import { theme, mocks } from "../../constants";
+import { RadioButtons, SegmentedControls } from "react-native-radio-buttons";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import FAIcon from "react-native-vector-icons/FontAwesome5";
+import { StackActions, NavigationActions } from "react-navigation";
 
 class Payment extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedOption: ''
+      selectedOption: "",
     };
   }
 
   render() {
     const options = [
-      'Payment Gateway',
-      'HelperQ Point'
-    ];
-   
-    function setSelectedOption(selectedOption){
+      "OVO", "CREDIT CARD", "POIN"];
+
+    function setSelectedOption(selectedOption) {
       this.setState({
-        selectedOption
+        selectedOption,
       });
     }
-   
-    function renderOption(option, selected, onSelect, index){
-      const radio = selected ?
-      <Icon name={'radio-button-checked'} size={24} color={theme.colors.primary}/>
-      :
-      <Icon name={'radio-button-unchecked'} size={24} color={theme.colors.black_t60} />
+
+    function renderOption(option, selected, onSelect, index) {
+      const radio = selected ? (
+        <Icon
+          name={"radio-button-checked"}
+          size={24}
+          color={theme.colors.primary}
+        />
+      ) : (
+        <Icon
+          name={"radio-button-unchecked"}
+          size={24}
+          color={theme.colors.black_t60}
+        />
+      );
       return (
         <TouchableWithoutFeedback onPress={onSelect} key={index}>
-          <View row center padding={theme.sizes.base} style={styles.border} margin={[theme.sizes.base*.5, 0]}>
+          <View
+            row
+            center
+            padding={[theme.sizes.base]}
+            style={{ flexDirection: "row-reverse" }}
+          >
             {radio}
-            <View row center marginLeft={theme.sizes.base*.5}>
-              <Text>{option}</Text>
-            </View>
+            <Text left style={{ flex: 1 }}>
+              {option}
+            </Text>
+            <Image
+              source={require("../../assets/img/png/undraw-access-account.png")}
+              style={{
+                width: theme.sizes.base*2,
+                aspectRatio: 1,
+                marginRight: theme.sizes.base
+              }}
+            />
           </View>
         </TouchableWithoutFeedback>
       );
     }
-   
-    function renderContainer(optionNodes){
-      return <View padding={[theme.sizes.base*.5, theme.sizes.base]}>{optionNodes}</View>;
+
+    function renderContainer(optionNodes) {
+      return <View marginTop={theme.sizes.base/2}>{optionNodes}</View>;
     }
 
-    const {navigate} = this.props.navigation
+    const { navigate } = this.props.navigation;
 
     return (
       <View flex={1} style={styles.parent}>
-        <ScrollView style={{flex: 1}}>
-          <View padding={[theme.sizes.base, theme.sizes.base, 0]}>
-            <View padding={theme.sizes.base} style={styles.border}>
-              <Text caption>Total Tagihan</Text>
-              <Text bold>Rp. 1.000.000</Text>
-            </View>
+        <ScrollView style={{ flex: 1 }}>
+          <View
+            color={"white"}
+            margin={[theme.sizes.base, theme.sizes.base, theme.sizes.base / 2]}
+            radius={theme.sizes.base / 2}
+            shadow
+            padding={theme.sizes.base}
+          >
+            <Text>Total Tagihan</Text>
+            <Text h3 secondary style={{ marginTop: theme.sizes.base / 2 }}>
+              Rp. 1.000.000
+            </Text>
           </View>
-          <View row center margin={[theme.sizes.base, theme.sizes.base, 0]} flex={1} padding={theme.sizes.base} style={styles.border}>
-            <Image source={require('../../assets/img/png/ic_logo_helperq_icon.png')} resizeMode={'contain'} style={{aspectRatio: 1, width: theme.sizes.base*2}}/>
-            <View flex={1} marginLeft={theme.sizes.base}>
-              <Text caption>Point Anda</Text>
-              <Text bold>1.000 Point</Text>
-            </View>
+          <View
+            row
+            center
+            color={"white"}
+            radius={theme.sizes.base / 2}
+            shadow
+            margin={[0, theme.sizes.base, theme.sizes.base]}
+            padding={theme.sizes.base}
+          >
+            <Icon name={"euro-symbol"} size={theme.sizes.base * 2} />
+            <Text style={{ flex: 1, marginLeft: theme.sizes.base }}>Poin</Text>
+            <Text bold secondary h3>
+              1.000 Poin
+            </Text>
           </View>
-          <View padding={[theme.sizes.base, theme.sizes.base, 0]}>
-            <Text title>Metode Pembayaran</Text>
-            <Text caption>( Pilih salah satu )</Text>
+          <View padding={[0, theme.sizes.base]}>
+            <Text bold>Metode Pembayaran</Text>
           </View>
           <RadioButtons
-            options={ options }
-            onSelection={ setSelectedOption.bind(this) }
-            selectedOption={this.state.selectedOption }
-            renderOption={ renderOption }
-            renderContainer={ renderContainer }
+            options={options}
+            onSelection={setSelectedOption.bind(this)}
+            selectedOption={this.state.selectedOption}
+            renderOption={renderOption}
+            renderContainer={renderContainer}
           />
         </ScrollView>
-        <View padding={theme.sizes.base}>
-          <Button color='primary' onPress={() => navigate('PaymentGateway')}>
-            <Text white bold center>Lanjutkan</Text>
+        <View padding={theme.sizes.base} color={'white'} style={{elevation: 6}}>
+          <Button color='secondary' onPress={() => navigate("PaymentGateway")}>
+            <Text white center>
+              PROSES
+            </Text>
           </Button>
         </View>
       </View>
-    )
+    );
   }
 }
 
 class CheckOut extends Component {
-  item = (item) =>{
-    return(
-      <View row padding={[theme.sizes.base*.5, 0]}>
-        <Text style={{flex: 1}}>{item.title}</Text>
-        <Text right style={{flex: 1}}>Rp. {item.price}</Text>
+  item = (item) => {
+    return (
+      <View row>
+        <Text lilbit bold style={{ flex: 1 }}>
+          {item.title}
+        </Text>
+        <Text lilbit primary right style={{ flex: 1 }}>
+          Rp. {item.price}
+        </Text>
       </View>
-    )
-  }
+    );
+  };
 
-  itemFooter = () =>{
-    return(
+  itemFooter = () => {
+    return (
       <View>
-        <View height={1} color={theme.colors.black_t90} margin={[theme.sizes.base*.5, 0]}/>
-        <View row padding={[theme.sizes.base*.5, 0]}>
-          <Text bold style={{flex: 1}}>Total</Text>
-          <Text bold right style={{flex: 1}}>Rp. [Total]</Text>
+        <View
+          height={1}
+          margin={[theme.sizes.lilbit, 0]}
+          color={theme.colors.black_t90}
+        />
+        <View row>
+          <Text lilbit bold style={{ flex: 1 }}>
+            Total
+          </Text>
+          <Text lilbit primary right style={{ flex: 1 }}>
+            Rp. [Total]
+          </Text>
         </View>
       </View>
-    )
-  }
+    );
+  };
 
-  render(){
+  render() {
     const list = [
-      {id: 0, title: 'Perekrutan Helper x1', price: '1.000.000'},
-      {id: 1, title: 'Pajak', price: '100.000'}
-    ]
-    const {navigate} = this.props.navigation
-    return(
+      { id: 0, title: "Perekrutan Helper x1", price: "1.000.000" },
+      { id: 1, title: "Pajak", price: "100.000" },
+    ];
+    const { navigate } = this.props.navigation;
+    return (
       <View style={styles.parent}>
-        <ScrollView style={{flex: 1}}>
+        <ScrollView style={{ flex: 1 }}>
           <View padding={theme.sizes.base}>
-            <Text title>Total Invoice</Text>
+            <Text bold>Total Invoice</Text>
           </View>
-          <FlatList
-            data={list}
-            renderItem={({item}) => this.item(item)}
-            keyExtractor={item => item.id}
-            ListFooterComponent={() => this.itemFooter()}
-            style={{paddingHorizontal: theme.sizes.base}}
-          />
+          <View
+            color={"white"}
+            padding={theme.sizes.base}
+            margin={[0, theme.sizes.base, theme.sizes.base]}
+            radius={theme.sizes.base / 2}
+            shadow
+          >
+            <FlatList
+              data={list}
+              renderItem={({ item }) => this.item(item)}
+              keyExtractor={(item) => item.id}
+              ListFooterComponent={() => this.itemFooter()}
+              ItemSeparatorComponent={() => (
+                <View height={theme.sizes.lilbit} />
+              )}
+            />
+          </View>
         </ScrollView>
-        <View padding={theme.sizes.base}>
-          <Button color='primary' onPress={() => navigate('Payment')}>
-            <Text white bold center>Payment</Text>
+        <View
+          padding={theme.sizes.base}
+          color={theme.colors.white}
+          style={{ elevation: 6 }}
+        >
+          <Button color="secondary" onPress={() => navigate("Payment")}>
+            <Text white center>
+              LANJUT
+            </Text>
           </Button>
         </View>
       </View>
-    )
+    );
   }
 }
 
 class PaymentGateway extends Component {
   static navigationOptions = {
-    title: 'Payment'
-  }
-  alert(){
-    const {navigate, dispatch} = this.props.navigation
+    title: "Payment",
+  };
+  alert() {
+    const { navigate, dispatch } = this.props.navigation;
     const resetAction = StackActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'DetailHelper', params: {navigateFrom: 'PaymentGateway'} })],
+      actions: [
+        NavigationActions.navigate({
+          routeName: "DetailHelper",
+          params: { navigateFrom: "PaymentGateway" },
+        }),
+      ],
     });
     Alert.alert(
-      'Berhasil',
-      'Payment Success, Terima kasih',
+      "Berhasil",
+      "Payment Success, Terima kasih",
       [
         // {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
         // {
@@ -159,21 +243,50 @@ class PaymentGateway extends Component {
         //   // onPress: () => console.log('Cancel Pressed'),
         //   style: 'cancel',
         // },
-        {text: 'Lanjutkan', onPress: () => dispatch(resetAction)},
+        { text: "Lanjutkan", onPress: () => dispatch(resetAction) },
       ],
-      {cancelable: false},
+      { cancelable: false }
     );
   }
-  render(){
-    const {navigate} = this.props.navigation
-    return(
+  render() {
+    const { navigate } = this.props.navigation;
+    return (
       <View style={styles.parent}>
         <View flex={1} middle center padding={theme.sizes.base}>
           <Text title>Payment Gateway</Text>
         </View>
         <View padding={theme.sizes.base}>
-          <Button color='primary' onPress={() => this.alert()}>
-            <Text white bold center>Confirm</Text>
+          <Button color="primary" onPress={() => this.alert()}>
+            <Text white bold center>
+              Confirm
+            </Text>
+          </Button>
+        </View>
+      </View>
+    );
+  }
+}
+
+class PaymentStatus extends Component {
+  static navigationOptions = {
+    title: 'Payment Status'
+  }
+  render(){
+    return(
+      <View style={styles.parent}>
+        <View flex={1} center middle>
+          <FAIcon name={'check-circle'} size={theme.sizes.base*10} color={theme.colors.success} />
+          <View marginTop={theme.sizes.base}>
+
+          </View>
+          <Text bold>TERIMA KASIH</Text>
+          <Text >PEMBAYARAN ANDA BERHASIL</Text>
+        </View>
+        <View padding={theme.sizes.base} color={'white'} style={{elevation: 6}}>
+          <Button color="secondary" onPress={() => this.alert()}>
+            <Text white center>
+              LANJUT
+            </Text>
           </Button>
         </View>
       </View>
@@ -181,6 +294,6 @@ class PaymentGateway extends Component {
   }
 }
 
-export { Payment, CheckOut, PaymentGateway } 
+export { Payment, CheckOut, PaymentGateway, PaymentStatus };
 
-const styles = GlobalStyle
+const styles = GlobalStyle;

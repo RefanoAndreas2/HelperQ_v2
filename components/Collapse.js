@@ -16,7 +16,7 @@ export default class Collapse extends Component {
     this.state = {
       title: props.title,
       leftIcon: props.leftIcon,
-      expanded: true,
+      expanded: false,
     };
   }
 

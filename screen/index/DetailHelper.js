@@ -71,14 +71,14 @@ class HeadContent extends Component {
         </View>
         <View padding={theme.sizes.base * 1.5} center>
           <Text h3 ellipsizeMode={"tail"} numberOfLines={1}>
-            Bambang Gunawan 
+            Bambang Gunawan
           </Text>
           <AirbnbRating
             showRating={false}
             size={theme.sizes.base}
             isDisabled={true}
             defaultRating={5}
-            selectedColor={'black'}
+            selectedColor={"black"}
           />
         </View>
       </View>
@@ -97,41 +97,42 @@ function Arrow({ context }) {
 class DetailProfil extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
   item = ({ title, value }) => {
     return (
       <View row>
-        <Text lilbit style={{ flex: 1 }}>{title}</Text>
-        <View width={theme.sizes.lilbit}/>
+        <Text lilbit style={{ flex: 1 }}>
+          {title}
+        </Text>
+        <View width={theme.sizes.lilbit} />
         <Text lilbit bold style={{ flex: 1 }}>
           {value}
         </Text>
       </View>
     );
-  }
+  };
 
   render() {
     const list = [
-      {title: 'Nama Lengkap', value: '[Nama]'},
-      {title: 'Email', value: '[Email]'},
-      {title: 'Jenis Kelamin', value: '[Jenis]'},
-      {title: 'Tempat Lahir', value: '[Tempat]'},
-      {title: 'Tanggal Lahir', value: '[Tanggal]'},
-      {title: 'No.Telp', value: '[Telp]'},
-      {title: 'Alamat', value: '[Alamat]'},
+      { title: "Nama Lengkap", value: "[Nama]" },
+      { title: "Email", value: "[Email]" },
+      { title: "Jenis Kelamin", value: "[Jenis]" },
+      { title: "Tempat Lahir", value: "[Tempat]" },
+      { title: "Tanggal Lahir", value: "[Tanggal]" },
+      { title: "No.Telp", value: "[Telp]" },
+      { title: "Alamat", value: "[Alamat]" },
     ];
     return (
-      <Collapse title={'Profile'} leftIcon={'face'}>
+      <Collapse title={"Profile"} leftIcon={"face"}>
         <FlatList
           data={list}
           renderItem={({ item }) => (
             <this.item title={item.title} value={item.value} />
           )}
           scrollEnabled={false}
-          ItemSeparatorComponent={() => <View height={theme.sizes.lilbit}/>}
+          ItemSeparatorComponent={() => <View height={theme.sizes.lilbit} />}
         />
       </Collapse>
     );
@@ -141,20 +142,22 @@ class DetailProfil extends Component {
 class DetailDetail extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
+
   item = ({ title, value }) => {
     return (
       <View row>
-        <Text lilbit style={{ flex: 1 }}>{title}</Text>
-        <View width={theme.sizes.base}/>
+        <Text lilbit style={{ flex: 1 }}>
+          {title}
+        </Text>
+        <View width={theme.sizes.base} />
         <Text lilbit bold style={{ flex: 1 }}>
           {value}
         </Text>
       </View>
     );
-  }
+  };
 
   render() {
     const list = [
@@ -167,7 +170,7 @@ class DetailDetail extends Component {
       { title: "Mengerti Bahasa Inggris", value: dummy.detail.bahasaInggris },
     ];
     return (
-      <Collapse title={'detail'} leftIcon={'assignment'}>
+      <Collapse title={"detail"} leftIcon={"assignment"}>
         <FlatList
           data={list}
           renderItem={({ item }) => (
@@ -180,19 +183,25 @@ class DetailDetail extends Component {
               }
             />
           )}
-          ItemSeparatorComponent={() => <View height={theme.sizes.lilbit}/>}
+          ItemSeparatorComponent={() => <View height={theme.sizes.lilbit} />}
           scrollEnabled={false}
         />
         <View row margin={[theme.sizes.lilbit, 0]}>
-          <Text lilbit style={{ flex: 1 }}>Bersedia Bekerja di :</Text>
+          <Text lilbit style={{ flex: 1 }}>
+            Bersedia Bekerja di :
+          </Text>
         </View>
         <FlatList
           data={dummy.detail.penempatan}
           renderItem={({ item, index }) => (
-            <Text lilbit bold style={{ flex: 1 }}>{index+1 + ". " + item.title}</Text>
+            <Text lilbit bold style={{ flex: 1 }}>
+              {index + 1 + ". " + item.title}
+            </Text>
           )}
           scrollEnabled={false}
-          ItemSeparatorComponent={() => <View height={theme.sizes.lilbit/2}/>}
+          ItemSeparatorComponent={() => (
+            <View height={theme.sizes.lilbit / 2} />
+          )}
         />
       </Collapse>
     );
@@ -202,58 +211,25 @@ class DetailDetail extends Component {
 class Keterampilan extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isCollapsed: true,
-    };
+    this.state = {};
   }
-
-  item = ({ title, index }) => {
-    return (
-      <View row margin={[theme.sizes.base * 0.5, 0]}>
-        <Text style={{ flex: 1 }}>{index + ". " + title}</Text>
-      </View>
-    );
-  };
 
   render() {
     return (
-      <Collapse title={'keterampilan kerja'} leftIcon={'accessible'}>
+      <Collapse title={"keterampilan kerja"} leftIcon={"accessible"}>
         <FlatList
           data={dummy.keterampilan}
           renderItem={({ item, index }) => (
-            <Text lilbit bold style={{ flex: 1 }}>{index+1 + ". " + item.title}</Text>
+            <Text lilbit bold style={{ flex: 1 }}>
+              {index + 1 + ". " + item.title}
+            </Text>
           )}
           scrollEnabled={false}
-          ItemSeparatorComponent={()=><View height={theme.sizes.lilbit/3} />}
+          ItemSeparatorComponent={() => (
+            <View height={theme.sizes.lilbit / 3} />
+          )}
         />
       </Collapse>
-      // <View>
-      //   <Touch
-      //     onPress={() =>
-      //       this.setState({ isCollapsed: !this.state.isCollapsed })
-      //     }
-      //   >
-      //     <View row center space={"between"} padding={theme.sizes.base}>
-      //       <Text title>Keterampilan Kerja</Text>
-      //       <Arrow context={this} />
-      //     </View>
-      //   </Touch>
-      //   <Collapsible
-      //     collapsed={this.state.isCollapsed}
-      //     collapsedHeight={0.1}
-      //     enablePointerEvents
-      //   >
-      //     <View>
-      //       <Separator />
-      //       <View padding={theme.sizes.base}>
-      //         <View row margin={[theme.sizes.base * 0.5, 0]}>
-      //           <Text style={{ flex: 1 }}>Keterampilan</Text>
-      //         </View>
-              
-      //       </View>
-      //     </View>
-      //   </Collapsible>
-      // </View>
     );
   }
 }
@@ -261,49 +237,47 @@ class Keterampilan extends Component {
 class RiwayatPekerjaan extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isCollapsed: true,
-    };
+    this.state = {};
   }
-
-  item = ({ title }) => {
-    return (
-      <View row margin={[theme.sizes.base * 0.5, 0]}>
-        <Text style={{ flex: 1 }}>{"- " + title}</Text>
-      </View>
-    );
-  };
 
   render() {
     return (
-      <View>
-        <Touch
-          onPress={() =>
-            this.setState({ isCollapsed: !this.state.isCollapsed })
-          }
-        >
-          <View row center space={"between"} padding={theme.sizes.base}>
-            <Text title>Riwayat Pekerjaan</Text>
-            <Arrow context={this} />
-          </View>
-        </Touch>
-        <Collapsible
-          collapsed={this.state.isCollapsed}
-          collapsedHeight={0.1}
-          enablePointerEvents
-        >
-          <View>
-            <Separator />
-            <View padding={theme.sizes.base}>
-              <FlatList
-                data={dummy.riwayatPekerjaan}
-                renderItem={({ item }) => <this.item title={item.title} />}
-                scrollEnabled={false}
-              />
-            </View>
-          </View>
-        </Collapsible>
-      </View>
+      <Collapse title={"riwayat pekerjaan"} leftIcon={"work"}>
+        <FlatList
+          data={dummy.riwayatPekerjaan}
+          renderItem={({ item }) => (
+            <Text lilbit bold style={{ flex: 1 }}>
+              {"- " + item.title}
+            </Text>
+          )}
+          scrollEnabled={false}
+          ItemSeparatorComponent={() => <View height={theme.sizes.base / 2} />}
+        />
+      </Collapse>
+    );
+  }
+}
+
+class RiwayatKesehatan extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  render() {
+    return (
+      <Collapse title={"riwayat kesehatan"} leftIcon={"healing"}>
+        <FlatList
+          data={dummy.riwayatPekerjaan}
+          renderItem={({ item }) => (
+            <Text lilbit bold style={{ flex: 1 }}>
+              {"- " + item.title}
+            </Text>
+          )}
+          scrollEnabled={false}
+          ItemSeparatorComponent={() => <View height={theme.sizes.base / 2} />}
+        />
+      </Collapse>
     );
   }
 }
@@ -318,58 +292,38 @@ class Review extends Component {
 
   item = ({ item }) => {
     return (
-      <View margin={[theme.sizes.base * 0.5, 0]}>
-        <View padding={theme.sizes.base} style={styles.border}>
-          <View row space={"between"}>
-            <Text bold>{item.majikan}</Text>
-            <Text caption>{item.tanggal}</Text>
-          </View>
-          {/* <TouchableWithoutFeedback onPress={() => console.log('texst')}> */}
-          <View wrap margin={[theme.sizes.base * 0.5, 0]} pointerEvents="none">
-            <AirbnbRating
-              size={theme.sizes.base}
-              isDisabled={true}
-              showRating={false}
-              defaultRating={item.rating}
-            />
-          </View>
-          {/* </TouchableWithoutFeedback> */}
-          <Text>{item.desc}</Text>
+      <View>
+        <View row space={"between"}>
+          <Text bold>{item.majikan}</Text>
+          <Text caption>{item.tanggal}</Text>
         </View>
+        <View wrap pointerEvents="none" marginBottom={theme.sizes.base / 2}>
+          <AirbnbRating
+            size={theme.sizes.lilbit}
+            isDisabled={true}
+            showRating={false}
+            defaultRating={item.rating}
+          />
+        </View>
+        <Text lilbit>{item.desc}</Text>
       </View>
     );
   };
 
   render() {
     return (
-      <View>
-        <Touch
-          onPress={() =>
-            this.setState({ isCollapsed: !this.state.isCollapsed })
-          }
-        >
-          <View row center space={"between"} padding={theme.sizes.base}>
-            <Text title>Review & Ratings</Text>
-            <Arrow context={this} />
-          </View>
-        </Touch>
-        <Collapsible
-          collapsed={this.state.isCollapsed}
-          collapsedHeight={0.1}
-          enablePointerEvents
-        >
-          <View>
-            <Separator />
-            <View padding={theme.sizes.base}>
-              <FlatList
-                data={dummy.review}
-                renderItem={({ item }) => <this.item item={item} />}
-                scrollEnabled={false}
-              />
+      <Collapse title={"review & ratings"} leftIcon={"email"}>
+        <FlatList
+          data={dummy.review}
+          renderItem={({ item }) => <this.item item={item} />}
+          scrollEnabled={false}
+          ItemSeparatorComponent={() => (
+            <View padding={[theme.sizes.base, 0]}>
+              <View height={1} backgroundColor={theme.colors.black_t90} />
             </View>
-          </View>
-        </Collapsible>
-      </View>
+          )}
+        />
+      </Collapse>
     );
   }
 }
@@ -380,104 +334,37 @@ class DetailContact extends Component {
     this.state = {};
   }
 
+  button = ({ icon, children, onPress }) => {
+    return (
+      <View radius={theme.sizes.base * 2} ovHidden color={"white"} shadow>
+        <Touch onPress={onPress}>
+          <View
+            width={theme.sizes.base * 3.5}
+            ratio={1}
+            middle
+            center
+            radius={theme.sizes.base * 2}
+          >
+            {children}
+          </View>
+        </Touch>
+      </View>
+    );
+  };
+
   render() {
     return (
       <View>
-        <Separator />
-        <View row padding={theme.sizes.base}>
-          <View flex={1}>
-            <View center>
-              <View
-                radius={theme.sizes.base * 2}
-                ovHidden
-                marginBottom={theme.sizes.base * 0.5}
-              >
-                <Touch onPress={() => null} ripple={theme.colors.whatsapp}>
-                  <View
-                    width={theme.sizes.base * 3.5}
-                    thick={2}
-                    ratio={1}
-                    middle
-                    center
-                    color={"white"}
-                    border={theme.colors.whatsapp}
-                    radius={theme.sizes.base * 2}
-                  >
-                    <FAIcon
-                      name={"whatsapp"}
-                      size={24}
-                      color={theme.colors.whatsapp}
-                    />
-                  </View>
-                </Touch>
-              </View>
-              <Text small bold>
-                Whatsapp
-              </Text>
-            </View>
-          </View>
-          <View flex={1}>
-            <View center>
-              <View
-                radius={theme.sizes.base * 2}
-                ovHidden
-                marginBottom={theme.sizes.base * 0.5}
-              >
-                <Touch onPress={() => null} ripple={theme.colors.primary}>
-                  <View
-                    width={theme.sizes.base * 3.5}
-                    thick={2}
-                    ratio={1}
-                    middle
-                    center
-                    color={"white"}
-                    border={theme.colors.primary}
-                    radius={theme.sizes.base * 2}
-                  >
-                    <FAIcon
-                      name={"sms"}
-                      size={24}
-                      color={theme.colors.primary}
-                    />
-                  </View>
-                </Touch>
-              </View>
-              <Text small bold>
-                SMS
-              </Text>
-            </View>
-          </View>
-          <View flex={1}>
-            <View center>
-              <View
-                radius={theme.sizes.base * 2}
-                ovHidden
-                marginBottom={theme.sizes.base * 0.5}
-              >
-                <Touch onPress={() => null} ripple={theme.colors.primary}>
-                  <View
-                    width={theme.sizes.base * 3.5}
-                    thick={2}
-                    ratio={1}
-                    middle
-                    center
-                    color={"white"}
-                    border={theme.colors.primary}
-                    radius={theme.sizes.base * 2}
-                  >
-                    <FAIcon
-                      name={"phone"}
-                      size={24}
-                      color={theme.colors.primary}
-                    />
-                  </View>
-                </Touch>
-              </View>
-              <Text small bold>
-                Phone
-              </Text>
-            </View>
-          </View>
+        <View row padding={theme.sizes.base} space={"between"}>
+          <this.button onPress={() => console.log("Texst")}>
+            <MDIcon name={"phone"} size={theme.sizes.base * 1.5} />
+          </this.button>
+          <this.button>
+            <MDIcon name={"message"} size={theme.sizes.base * 1.5} />
+          </this.button>
+          <this.button>
+            <FAIcon name={"whatsapp"} size={theme.sizes.base * 1.5} />
+          </this.button>
         </View>
       </View>
     );
@@ -509,9 +396,13 @@ export default class DetailHelper extends Component {
 
   bottomButton = ({ title, onPress }) => {
     return (
-      <View padding={theme.sizes.base}>
-        <Button color="primary" onPress={onPress}>
-          <Text white center bold>
+      <View
+        padding={theme.sizes.base}
+        color={'white'}
+        style={{ elevation: 6 }}
+      >
+        <Button color="secondary" onPress={onPress}>
+          <Text white center>
             {title}
           </Text>
         </Button>
@@ -535,37 +426,24 @@ export default class DetailHelper extends Component {
         </ScrollView>
         <this.bottomButton
           onPress={() => dispatch(toOrder)}
-          title={"Back To Home"}
+          title={"BACK TO HOME"}
         />
       </View>
     ) : (
       <View style={styles.parent}>
         <ScrollView style={styles.parent}>
           <HeadContent />
-          {/* <Collapse title={'Profile'} leftIcon={'face'}>
-            <Text>test</Text>
-          </Collapse> */}
-          {/* <DetailContact /> */}
-          {/* <Separator /> */}
           <DetailProfil />
-          {/* <Separator /> */}
           <DetailDetail />
-          {/* <Separator /> */}
           <Keterampilan />
-          {/* <Separator /> */}
           <RiwayatPekerjaan />
-          {/* <Separator /> */}
+          <RiwayatKesehatan />
           <Review />
         </ScrollView>
         <this.bottomButton
           onPress={() => this.alert()}
-          title={"Rekrut Sekarang"}
+          title={"REKRUT SEKARANG"}
         />
-        {/* <View padding={theme.sizes.base}>
-            <Button color='primary' onPress={() => this.alert()}>
-              <Text white center bold>Rekrut Sekarang</Text>
-            </Button>
-          </View> */}
       </View>
     );
   }
