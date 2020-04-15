@@ -255,10 +255,10 @@ class PaymentGateway extends Component {
         <View flex={1} middle center padding={theme.sizes.base}>
           <Text title>Payment Gateway</Text>
         </View>
-        <View padding={theme.sizes.base}>
-          <Button color="primary" onPress={() => this.alert()}>
-            <Text white bold center>
-              Confirm
+        <View padding={theme.sizes.base} color={'white'} style={{elevation: 6}}>
+          <Button color="secondary" onPress={() => navigate('PaymentStatus')}>
+            <Text white center>
+              KONFIRMASI
             </Text>
           </Button>
         </View>
@@ -272,6 +272,16 @@ class PaymentStatus extends Component {
     title: 'Payment Status'
   }
   render(){
+    const {dispatch} = this.props.navigation
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({
+          routeName: "DetailHelper",
+          params: { navigateFrom: "PaymentGateway" },
+        }),
+      ],
+    });
     return(
       <View style={styles.parent}>
         <View flex={1} center middle>
@@ -283,7 +293,7 @@ class PaymentStatus extends Component {
           <Text >PEMBAYARAN ANDA BERHASIL</Text>
         </View>
         <View padding={theme.sizes.base} color={'white'} style={{elevation: 6}}>
-          <Button color="secondary" onPress={() => this.alert()}>
+          <Button color="secondary" onPress={() => dispatch(resetAction)}>
             <Text white center>
               LANJUT
             </Text>

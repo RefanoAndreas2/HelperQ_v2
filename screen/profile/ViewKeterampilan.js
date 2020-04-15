@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { StyleSheet, FlatList, AsyncStorage, ScrollView} from 'react-native'
 import { Text, View, GlobalStyle, Button, CustomInput, Touch } from '../../components'
 import { theme, mocks } from '../../constants';
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 const helper = {
   keterampilan : [
@@ -19,16 +20,18 @@ export default class ViewKeterampilan extends Component {
     };
   }
   
-  static navigationOptions = ({navigation}) => ({
-    title: 'Keterampilan',
-    headerRight: (
-      <Button color='primary' onPress={() => navigation.navigate('Home')}>
-        <View padding={[0, theme.sizes.base]}>
-          <Text white bold>Edit</Text>
-        </View>
-      </Button>
-    ),
-  })
+  static navigationOptions = ({ navigation }) => ({
+    title: "Keterampilan",
+    headerStyle: {
+      backgroundColor: 'white',
+      color: theme.colors.primary
+    },
+    headerTitleStyle: {
+      color: theme.colors.primary,
+      fontWeight: 'bold'
+    },
+    headerTintColor: theme.colors.primary
+  });
 
   async componentDidMount(){
     try {
@@ -40,24 +43,34 @@ export default class ViewKeterampilan extends Component {
     }
   }
 
+
   render() {
     return (
       <ScrollView style={styles.parent}>
-        <View padding={theme.sizes.base}>
-          <Text bold>Keterampilan</Text>
+        <View row center space={"between"} padding={theme.sizes.base}>
+          <Text style={{ marginLeft: theme.sizes.base / 2 }}>Total 5 Keterampilan</Text>
+          <Button smallHeight color="secondary">
+            <Text
+              caption
+              white
+              style={{ paddingHorizontal: theme.sizes.base }}
+            >
+              Edit
+            </Text>
+          </Button>
         </View>
-        <View padding={theme.sizes.base}>
-          <FlatList
-            data={helper.keterampilan}
-            renderItem={({item, index}) =>
-              <View key={item.id} center row space={'between'}>
-                <Text>{index+1}. {item.title}</Text>
-              </View>
-            }
-            keyExtractor={item => item.id}
-            ItemSeparatorComponent={() => <View height={theme.sizes.base}/>}
-          />
-        </View>
+        <FlatList
+          data={helper.keterampilan}
+          renderItem={({item, index}) =>
+            <View key={index} row color={'white'} shadow padding={theme.sizes.base} margin={[0, theme.sizes.base]} key={item.id} center row>
+              <Icon name={'radio-button-checked'} size={theme.sizes.base*1.5} color={theme.colors.secondary} />
+              <Text style={{marginLeft: theme.sizes.base}}>{item.title}</Text>
+            </View>
+          }
+          keyExtractor={item => item.id}
+          ItemSeparatorComponent={() => <View height={theme.sizes.base}/>}
+          ListFooterComponent={() => <View height={theme.sizes.base} />}
+        />
       </ScrollView>
     )
   }

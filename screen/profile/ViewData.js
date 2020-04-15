@@ -32,7 +32,8 @@ export default class ViewData extends Component {
   }
 
   static navigationOptions = ({ navigation }) => ({
-    title: `${navigation.state.params.title}`
+    // title: `${navigation.state.params.title}`
+    title: 'Dokumen Pribadi'
   });
 
   async componentDidMount(){

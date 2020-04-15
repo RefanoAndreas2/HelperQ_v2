@@ -252,7 +252,7 @@ const orderStack = createStackNavigator({
   orderTab
 },{
   defaultNavigationOptions: {
-    title: 'Order',
+    title: 'Rekrut',
     headerRight: () =>
       <View row>
         <TouchableOpacity activeOpacity={0.5} onPress={() => null}>
@@ -311,7 +311,6 @@ const profileStack = createStackNavigator({
   }
 },{
   defaultNavigationOptions: {
-
   }
 })
 
@@ -325,7 +324,7 @@ const indexBottomTab = createBottomTabNavigator({
         ),
     }
   },
-  Order: {
+  Rekrut: {
     screen: orderStack,
     navigationOptions: {
       tabBarIcon: (
@@ -344,7 +343,7 @@ const indexBottomTab = createBottomTabNavigator({
     }
   },
 },{
-  initialRouteName: 'Profile',
+  initialRouteName: 'Rekrut',
   tabBarOptions: {
     showIcon: true,
     activeTintColor: theme.colors.secondary
@@ -352,17 +351,19 @@ const indexBottomTab = createBottomTabNavigator({
 })
 
 const indexStack = createStackNavigator({
-  PaymentStatus,
-  Payment,
+  ViewData,
   indexBottomTab:{
     screen: indexBottomTab,
     navigationOptions: {
       headerShown: false
     }
   },
-  KontrakKerja,
-  Verifikasi,
+  ViewProfile,
   DetailHelper,
+  KontrakKerja,
+  PaymentStatus,
+  Payment,
+  Verifikasi,
   Settings,
   TermsAndCondition,
   PrivacyPolicy,
@@ -371,16 +372,12 @@ const indexStack = createStackNavigator({
   ViewRiwayatPekerjaan,
   ViewRiwayatKesehatan,
   ViewDokumen,
-  ViewProfile,
   ViewKeterampilan,
   ViewGeneral,
   ReviewRating,
   Filter,
   Notification,
   PaymentGateway,
-
-  //Profile
-  ViewData,
 },titleStyle)
 
 const switcher = createSwitchNavigator({
