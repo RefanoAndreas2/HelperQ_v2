@@ -32,8 +32,16 @@ export default class ViewData extends Component {
   }
 
   static navigationOptions = ({ navigation }) => ({
-    // title: `${navigation.state.params.title}`
-    title: 'Dokumen Pribadi'
+    title: "Dokumen Pribadi",
+    headerStyle: {
+      backgroundColor: "white",
+      color: theme.colors.primary,
+    },
+    headerTitleStyle: {
+      color: theme.colors.primary,
+      fontWeight: "bold",
+    },
+    headerTintColor: theme.colors.primary,
   });
 
   async componentDidMount(){
@@ -69,99 +77,71 @@ export default class ViewData extends Component {
   render() {
     const {navigate} = this.props.navigation
     return (
-      <ScrollView style={styles.parent}>
-        <View center padding={theme.sizes.base}>
-          <Image
-            source={{ uri: "https://source.unsplash.com/random" }}
-            style={{
-              width: theme.sizes.base * 6,
-              aspectRatio: 1,
-              borderRadius: theme.sizes.base * 6,
-              marginBottom: theme.sizes.base
-            }}
-          />
-          <AirbnbRating
-            showRating={false}
-            size={theme.sizes.base}
-            isDisabled={true}
-            defaultRating={5}
-          />
-          <Text title ellipsizeMode={"tail"} numberOfLines={1}>
-            Bambang Gunawan
-          </Text>
-          <Text lilbit italic ellipsizeMode={"tail"} numberOfLines={1}>
-            Not Verified | Status : Publish
-          </Text>
+      <View style={styles.parent}>
+        <ScrollView style={styles.parent}>
+          <View center padding={theme.sizes.base}>
+            <Image
+              source={{ uri: "https://source.unsplash.com/random" }}
+              style={{
+                width: theme.sizes.base * 6,
+                aspectRatio: 1,
+                borderRadius: theme.sizes.base * 6,
+                marginBottom: theme.sizes.base
+              }}
+            />
+            <AirbnbRating
+              showRating={false}
+              size={theme.sizes.base}
+              isDisabled={true}
+              defaultRating={5}
+            />
+            <Text title ellipsizeMode={"tail"} numberOfLines={1}>
+              Bambang Gunawan
+            </Text>
+            <Text lilbit italic ellipsizeMode={"tail"} numberOfLines={1}>
+              Not Verified | Status : Publish
+            </Text>
+          </View>
+
+          <View margin={[theme.sizes.base, 0]}>
+            <FlatList
+              data={this.state.async_role == 'helper' ? helper : majikan}
+              renderItem={({ item }) => (
+                <View shadow color={'white'}>
+                  <Touch onPress={() => navigate(item.navigate, item.params)}>
+                    <View row padding={theme.sizes.base}>
+                      <Icon name={item.icon} size={24} color={theme.colors.primary}/>
+                      <View flex={1} paddingLeft={theme.sizes.base * 0.5}>
+                        <Text color={item.title == 'Sign Out' ? theme.colors.secondary : 'black'}>{item.title}</Text>
+                      </View>
+                      {item.title == "Sign Out" ? null : (
+                        <Icon name={"arrow-drop-down"} size={24} style={{transform:[{rotate: '-90deg'}]}} />
+                      )}
+                    </View>
+                  </Touch>
+                </View>
+              )}
+              keyExtractor={item => item.id}
+              ItemSeparatorComponent={() => (
+                <View
+                  height={theme.sizes.base}
+                />
+              )}
+              ListFooterComponent={<View height={3} />}
+            />
+          </View>
+        </ScrollView>
+        <View padding={theme.sizes.base} color={'white'} style={{elevation: 6}}>
           <Button
-            smallHeight
-            color={"primary"}
+            color={'secondary'}
             onPress={() => this.topButton(this.state.async_role, this.state.verified)}
-            style={{marginTop: theme.sizes.base}}
           >
-            <Text lilbit white center style={{marginHorizontal: theme.sizes.base}}>
+            <Text white center style={{marginHorizontal: theme.sizes.base}}>
               {this.state.async_role=='helper' ? this.state.verified ? 'Lihat Order Verifikasi':'Verifikasi Akun' : 'Ganti Foto'}
             </Text>
           </Button>
         </View>
-        {/* <View row padding={[theme.sizes.base, theme.sizes.base, 0]}>
-          <View>
-            <Image
-              source={{uri: 'https://source.unsplash.com/random'}}
-              style={{
-                flex: 1,
-                aspectRatio: 1,
-                borderRadius: theme.sizes.base*.5}}
-            />
-            <AirbnbRating showRating={false} size={theme.sizes.base*.5} isDisabled={true} defaultRating={5}/>
-          </View>
-          
-          <View flex={1} marginLeft={theme.sizes.base}>
-            <Text title ellipsizeMode={'tail'} numberOfLines={1}>Nama</Text>
-            <Text caption italic ellipsizeMode={'tail'} numberOfLines={1}>Not Verified</Text>
-            <View marginTop={theme.sizes.base*.5}>
-              <Button smallHeight color={'primary'} onPress={() => this.topButton(this.state.async_role, this.state.verified)}>
-                <View>
-                  <Text white bold center >
-                    {this.state.async_role=='helper' ? this.state.verified ? 'Lihat Order Verifikasi':'Verifikasi Akun' : 'Ganti Foto'}
-                  </Text>
-                </View>
-              </Button>
-            </View>
-          </View>
-        </View> */}
-
-        <View margin={[theme.sizes.base, 0]}>
-          <FlatList
-            data={this.state.async_role == 'helper' ? helper : majikan}
-            renderItem={({ item }) => (
-              <View shadow color={'white'}>
-                <Touch onPress={() => navigate(item.navigate, item.params)}>
-                  <View row padding={theme.sizes.base}>
-                    <Icon name={item.icon} size={24} color={theme.colors.primary}/>
-                    {/* {item.title == "Sign Out" ? 
-                      <FAIcon name={item.icon} size={20} color={theme.colors.secondary}/>
-                      :
-                    } */}
-                    <View flex={1} paddingLeft={theme.sizes.base * 0.5}>
-                      <Text color={item.title == 'Sign Out' ? theme.colors.secondary : 'black'}>{item.title}</Text>
-                    </View>
-                    {item.title == "Sign Out" ? null : (
-                      <Icon name={"arrow-drop-down"} size={24} style={{transform:[{rotate: '-90deg'}]}} />
-                    )}
-                  </View>
-                </Touch>
-              </View>
-            )}
-            keyExtractor={item => item.id}
-            ItemSeparatorComponent={() => (
-              <View
-                height={theme.sizes.base}
-              />
-            )}
-            ListFooterComponent={<View height={3} />}
-          />
-        </View>
-      </ScrollView>
+      </View>
     )
   }
 }

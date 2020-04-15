@@ -19,16 +19,18 @@ export default class ViewDokumen extends Component {
     };
   }
   
-  static navigationOptions = ({navigation}) => ({
-    title: 'Dokumen',
-    headerRight: (
-      <Button color='primary' onPress={() => navigation.navigate('Home')}>
-        <View padding={[0, theme.sizes.base]}>
-          <Icon name={'add'} size={theme.sizes.base*1.5} color={'white'}/>
-        </View>
-      </Button>
-    ),
-  })
+  static navigationOptions = ({ navigation }) => ({
+    title: "Dokumen",
+    headerStyle: {
+      backgroundColor: 'white',
+      color: theme.colors.primary
+    },
+    headerTitleStyle: {
+      color: theme.colors.primary,
+      fontWeight: 'bold'
+    },
+    headerTintColor: theme.colors.primary
+  });
 
   async componentDidMount(){
     try {
@@ -42,19 +44,24 @@ export default class ViewDokumen extends Component {
 
   render() {
     return (
-      <FlatList
-        data={helper.keterampilan}
-        renderItem={({item, index}) =>
-          <Touch>
-            <View key={item.id} padding={theme.sizes.base} center row space={'between'}>
-              <Text>{item.title}</Text>
-              <Icon name={'chevron-right'} size={theme.sizes.base*1.5}/>
+      <View>
+        <View padding={theme.sizes.base}>
+          <Text>Total 1 Dokumen</Text>
+        </View>
+        <FlatList
+          data={helper.keterampilan}
+          renderItem={({item, index}) =>
+            <View row color={'white'} shadow center padding={theme.sizes.base} space={'between'}>
+              <Text color={item.title == 'Sign Out' ? theme.colors.secondary : 'black'}>{item.title}</Text>
+              <Icon name={"arrow-drop-down"} size={24} style={{transform:[{rotate: '-90deg'}]}} />
             </View>
-          </Touch>
-        }
-        keyExtractor={item => item.id}
-        ItemSeparatorComponent={() => <View height={1} color={theme.colors.black_t90}/>}
-      />
+          }
+          keyExtractor={item => item.id}
+          ItemSeparatorComponent={() => <View height={theme.sizes.base} />}
+          ListFooterComponent={() => <View height={theme.sizes.base} />}
+          // style={{marginTop: theme.sizes.base}}
+        />
+      </View>
     )
   }
 }

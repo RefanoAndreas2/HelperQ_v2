@@ -381,8 +381,8 @@ const indexStack = createStackNavigator({
 },titleStyle)
 
 const switcher = createSwitchNavigator({
-  authStack,
   indexStack,
+  authStack,
   formStack,
 },{
   defaultNavigationOptions:{
