@@ -91,6 +91,7 @@ export default class Input extends Component {
     this.textInput.focus()
     // this.setState({borderBottomColor: theme.colors.primary})
   }
+
   // blur(){
   //   // this.setState({borderBottomColor: theme.colors.black_t60})
   // }
@@ -134,6 +135,7 @@ export default class Input extends Component {
             onSubmitEditing={this.onSubmitEditing.bind(this)}
             onFocus={() => this.onFocus()}
             onBlur={() => this.onBlur()}
+            editable={true}
             {...props}
           />
           {this.renderRight()}
