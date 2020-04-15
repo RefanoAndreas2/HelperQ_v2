@@ -32,68 +32,11 @@ import ActionButton from "react-native-action-button";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { SegmentedControls } from "react-native-radio-buttons";
 import Animated, { Extrapolate } from "react-native-reanimated";
+import Base from '../../Utils/Base'
 
-function List({ item, context }) {
-  return (
-    <View
-      style={styles.listTouch}
-      radius={theme.sizes.base * 0.5}
-      shadow
-      ovHidden
-    >
-      <Touch onPress={() => context.props.navigation.navigate("DetailHelper")}>
-        <View color={"white"}>
-          <View row padding={theme.sizes.base * 0.5}>
-            <View style={{ aspectRatio: 1 / 1.375 }} space={"between"}>
-              <Image
-                source={{ uri: "https://source.unsplash.com/random/?people" }}
-                style={{
-                  aspectRatio: 1 / 1,
-                  borderRadius: theme.sizes.base * 0.5
-                }}
-              />
-              <Badge>{item.status ? "Sedang Bekerja" : "Belum Bekerja"}</Badge>
-            </View>
-            <View flex={1} marginLeft={theme.sizes.base * 0.75}>
-              <View wrap>
-                <AirbnbRating
-                  showRating={false}
-                  size={theme.sizes.base*.75}
-                  isDisabled={true}
-                  defaultRating={5}
-                />
-              </View>
-              <View margin={[0]}>
-                <Text ellipsizeMode={"tail"} upbit bold numberOfLines={1}>
-                  {item.nama}
-                </Text>
-              </View>
-              <Text lilbit>
-                {item.pekerjaan} | Rp. {item.gaji}
-              </Text>
-              <View row center marginTop={theme.sizes.base/4}>
-                <Icon name={"place"} size={theme.sizes.lilbit} style={{marginRight: theme.sizes.base/4}} />
-                <Text caption>Asal Daerah : {item.asal}</Text>
-              </View>
-              <View row center marginTop={theme.sizes.base/4}>
-                <Icon name={"place"} size={theme.sizes.lilbit} style={{marginRight: theme.sizes.base/4}} />
-                <Text caption>Asal Daerah : {item.asal}</Text>
-              </View>
-              <View row center marginTop={theme.sizes.base/4}>
-                <Icon name={"place"} size={theme.sizes.lilbit} style={{marginRight: theme.sizes.base/4}} />
-                <Text caption>Asal Daerah : {item.asal}</Text>
-              </View>
-              {/* <Text caption>Asal Daerah : {item.asal}</Text>
-              <Text caption>Lokasi : {item.lokasi}</Text>
-              <Text caption>{item.pendidikan}</Text> */}
-            </View>
-          </View>
-
-        </View>
-      </Touch>
-    </View>
-  );
-}
+// function List({ item, context }) {
+  
+// }
 
 function Ads({ item }) {
   return (
@@ -109,7 +52,7 @@ function Separator() {
   return <View padding={theme.sizes.base / 2} />;
 }
 
-class AllList extends Component {
+class AllList extends Base {
   constructor(props) {
     super(props);
     this.state = {
@@ -210,7 +153,7 @@ class AllList extends Component {
   }
 }
 
-class Verified extends Component {
+class Verified extends Base {
   constructor(props) {
     super(props);
     this.state = {
@@ -283,7 +226,7 @@ class Verified extends Component {
   }
 }
 
-const options = ["All Helpers", "Verified"];
+// const options = ["All Helpers", "Verified"];
 const HEADER_HEIGHT = theme.sizes.base * 3.7 - 2 + StatusBar.currentHeight;
 const c =
   (Dimensions.get("window").width / 16) * 6 + StatusBar.currentHeight * 1.5;
@@ -309,13 +252,108 @@ const bgC = Animated.color(
   })
 );
 
-class MainHome extends Component {
+class MainHome extends Base {
   constructor(props) {
     super(props);
     this.state = {
       banner: mocks.helperList.banner,
-      list: mocks.helperList.list
+      list: mocks.helperList.list,
+      token : '',
+      data_arr : [],
+      baner_arr : [],
+      search : '',
+      optionTab : ["All Helpers", "Verified"],
+      selectedTab : 0,
     };
+  }
+  
+  async componentDidMount(){
+    var token = await AsyncStorage.getItem('token')
+    await this.setState({token : token})
+    console.log(token)
+
+    await this.get_dataBanner()
+    await this.get_data()
+  }
+
+  async get_data(){
+    try{
+      await this.setState({data_arr : []})
+
+      var url = this.url + '/user?search='+this.state.search
+
+      if(this.state.selectedTab == 1){
+        url += '&is_verified=1'
+      }
+
+      var response = await this.axios.get(url,{
+        headers:{
+          'Content-Type': 'application/json',
+          'Authorization' : this.state.token
+        }
+      })
+
+      if(response.data.status == 'success'){
+        var data = response.data.data.data
+        for(var x in data){
+          data[x].type = 'list'
+          data[x].rating_int = 0
+
+          var rating = 0
+          var data_rating = data[x].rating
+          for(var y in data_rating){
+            rating += parseFloat( (data_rating[y].rating / data_rating.length) )
+          }
+
+          data[x].rating_int = rating
+        }
+
+        await this.setState({data_arr : data})
+      }
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+
+  async get_dataBanner(){
+    try{
+      await this.setState({data_arr : []})
+
+      var response = await this.axios.get(this.url + '/banner?type=user',{
+        headers:{
+          'Content-Type': 'application/json',
+          'Authorization' : this.state.token
+        }
+      })
+
+      if(response.data.status == 'success'){
+        var data = response.data.data.data
+        for(var x in data){
+          data[x].type = 'banner'
+          data[x].index = x
+          data[x].banner_display = {uri : this.url_image + '/banner?file_name=' + data[x].file_name}
+        }
+        await this.setState({baner_arr : data})
+      }
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+
+  async changeSearch(value){
+    await this.setState({search : value})
+    await this.get_data()
+  }
+
+  async selectHelper(index){
+    this.props.navigation.navigate("DetailHelper", {id : this.state.data_arr[index]})
+  }
+
+  async selectedTab(index){
+    await this.setState({selectedTab : index})
+    await this.get_data()
   }
 
   render() {
@@ -383,7 +421,7 @@ class MainHome extends Component {
                 }}
               />
             )}
-            keyExtractor={item => item.id}
+            keyExtractor={(item) => item.id}
             pagingEnabled
             style={{
               marginTop: StatusBar.currentHeight - 3
@@ -428,17 +466,19 @@ class MainHome extends Component {
                     fontSize: theme.sizes.base,
                     marginLeft: theme.sizes.base
                   }}
+                  onChangeText={(value)=>this.changeSearch(value)}
                 />
               </View>
               <View margin={theme.sizes.base}>
                 <SegmentedControls
-                  options={options}
+                  options={this.state.optionTab}
                   tint={theme.colors.primary_dark}
                   separatorWidth={0}
-                  selectedOption={options[0]}
+                  selectedOption={this.state.optionTab[this.state.selectedTab]}
                   optionStyle={styles.segmented_optionStyle}
                   optionContainerStyle={styles.segmented_optionContainerStyle}
                   containerStyle={styles.segmented_containerStyle}
+                  onSelection={(selectedOption, selectedIndex)=>this.selectedTab(selectedIndex)}
                 />
               </View>
             </Animated.View>
@@ -447,13 +487,14 @@ class MainHome extends Component {
           {/* SECBAR_END */}
 
           <FlatList
-            data={this.state.list}
-            renderItem={({ item }) =>
-              item.tipe == "list" ? (
-                <List item={item} context={this} />
-              ) : (
-                <Ads item={item} />
-              )
+            data={this.state.data_arr}
+            renderItem={({ item,index }) =>
+              <ListHelper item={item} navigation={this.props.navigation} index={index} selectHelper={()=>this.selectHelper(index)} />
+              // item.type == "list" ? (
+              //   <ListHelper item={item} navigation={this.props.navigation} />
+              // ) : (
+              //   <Ads item={item} />
+              // )
             }
             keyExtractor={item => item.id}
             ItemSeparatorComponent={() => <Separator />}
@@ -467,6 +508,66 @@ class MainHome extends Component {
 }
 
 export { AllList, Verified, MainHome };
+
+export class ListHelper extends Base{
+  render(){
+      return (
+          <View style={styles.listTouch} radius={theme.sizes.base * 0.5} shadow ovHidden >
+            <Touch onPress={() => this.props.selectHelper(this.props.index)}>
+              <View color={"white"}>
+                <View row padding={theme.sizes.base * 0.5}>
+                  <View style={{ aspectRatio: 1 / 1.375 }} space={"between"}>
+                    <Image
+                      source={{ uri: "https://source.unsplash.com/random/?people" }}
+                      style={{
+                        aspectRatio: 1 / 1,
+                        borderRadius: theme.sizes.base * 0.5
+                      }}
+                    />
+                    <Badge>{this.props.item.on_going_contract.length > 0 ? "Sedang Bekerja" : "Belum Bekerja"}</Badge>
+                  </View>
+                  <View flex={1} marginLeft={theme.sizes.base * 0.75}>
+                    <View wrap>
+                      <AirbnbRating
+                        showRating={false}
+                        size={theme.sizes.base*.75}
+                        isDisabled={true}
+                        defaultRating={this.props.item.rating_int}
+                        count={5}
+                      />
+                    </View>
+                    <View margin={[0]}>
+                      <Text ellipsizeMode={"tail"} upbit bold numberOfLines={1}>
+                        {this.props.item.name}
+                      </Text>
+                    </View>
+                    <Text lilbit>
+                      {this.props.item.helper_sub_category.name} | Rp. {this.props.item.requested_price}
+                    </Text>
+                    <View row center marginTop={theme.sizes.base/4}>
+                      <Icon name={"place"} size={theme.sizes.lilbit} style={{marginRight: theme.sizes.base/4}} />
+                      <Text caption>Asal Daerah : {this.props.item.city.name}</Text>
+                    </View>
+                    <View row center marginTop={theme.sizes.base/4}>
+                      <Icon name={"place"} size={theme.sizes.lilbit} style={{marginRight: theme.sizes.base/4}} />
+                      <Text caption>Asal Daerah : {this.props.item.city.name}</Text>
+                    </View>
+                    <View row center marginTop={theme.sizes.base/4}>
+                      <Icon name={"place"} size={theme.sizes.lilbit} style={{marginRight: theme.sizes.base/4}} />
+                      <Text caption>Asal Daerah : {this.props.item.city.name}</Text>
+                    </View>
+                    {/* <Text caption>Asal Daerah : {this.props.item.asal}</Text>
+                    <Text caption>Lokasi : {this.props.item.lokasi}</Text>
+                    <Text caption>{this.props.item.pendidikan}</Text> */}
+                  </View>
+                </View>
+      
+              </View>
+            </Touch>
+          </View>
+        );
+  }
+}
 
 const styles = StyleSheet.create({
   animated_navbar: {
