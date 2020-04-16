@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   Alert,
+  AsyncStorage,
 } from "react-native";
 import {
   Text,
@@ -21,13 +22,70 @@ import { RadioButtons, SegmentedControls } from "react-native-radio-buttons";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import FAIcon from "react-native-vector-icons/FontAwesome5";
 import { StackActions, NavigationActions } from "react-navigation";
+import Base from '../../Utils/Base'
 
-class Payment extends Component {
+class Payment extends Base {
   constructor(props) {
     super(props);
     this.state = {
       selectedOption: "",
+      token : '',
+      method_arr : [],
+      total_price : 0,
     };
+  }
+
+  async componentDidMount(){
+    var token = await AsyncStorage.getItem('token')
+    await this.setState({token : token, total_price : this.props.navigation.state.params.total_price})
+
+    await this.get_data()
+  }
+
+  async get_data(){
+    try{
+      var response = await this.axios.get(this.url + '/payment-method', {
+          headers:{
+              'Content-Type': 'application/json',
+              'Authorization' : this.state.token
+          }
+      })
+      if(response.data.status == 'success'){
+          var data = response.data.data.data
+          for(var x in data){
+              data[x].label = data[x].name
+              data[x].value = data[x].id
+          }
+          await this.setState({method_arr : data})
+      }
+    }
+    catch(e){
+        console.log(e)
+    }
+  }
+
+  async toPaymentGateway(){
+    var data_helper = await AsyncStorage.getItem('helperData')
+    data_helper = JSON.parse(data_helper)
+    
+    var data = {}
+    data.helper = data_helper
+    data.payment_method = this.state.selectedOption
+    
+    try{
+      var response = await this.axios.post(this.url + '/order-interested', data, {
+          headers:{
+              'Content-Type': 'application/json',
+              'Authorization' : this.state.token
+          }
+      })
+      if(response.data.status == 'success'){
+        this.props.navigation.navigate("PaymentGateway")
+      }
+    }
+    catch(e){
+        console.log(e)
+    }
   }
 
   render() {
@@ -64,7 +122,7 @@ class Payment extends Component {
           >
             {radio}
             <Text left style={{ flex: 1 }}>
-              {option}
+              {option.name}
             </Text>
             <Image
               source={require("../../assets/img/png/undraw-access-account.png")}
@@ -97,7 +155,7 @@ class Payment extends Component {
           >
             <Text>Total Tagihan</Text>
             <Text h3 secondary style={{ marginTop: theme.sizes.base / 2 }}>
-              Rp. 1.000.000
+              Rp. {this.state.total_price}
             </Text>
           </View>
           <View
@@ -119,7 +177,7 @@ class Payment extends Component {
             <Text bold>Metode Pembayaran</Text>
           </View>
           <RadioButtons
-            options={options}
+            options={this.state.method_arr}
             onSelection={setSelectedOption.bind(this)}
             selectedOption={this.state.selectedOption}
             renderOption={renderOption}
@@ -127,7 +185,7 @@ class Payment extends Component {
           />
         </ScrollView>
         <View padding={theme.sizes.base} color={'white'} style={{elevation: 6}}>
-          <Button color='secondary' onPress={() => navigate("PaymentGateway")}>
+          <Button color='secondary' onPress={() => this.toPaymentGateway()}>
             <Text white center>
               PROSES
             </Text>
@@ -138,7 +196,47 @@ class Payment extends Component {
   }
 }
 
-class CheckOut extends Component {
+class CheckOut extends Base {
+  state = {
+    token : '',
+    price_data : [],
+    total_price : 0,
+  }
+
+  async componentDidMount(){
+    var token = await AsyncStorage.getItem('token')
+    await this.setState({token : token})
+
+    await this.get_data('interested')
+  }
+
+  async get_data(type){
+    try{
+      var arr = this.state.price_data
+
+      var response = await this.axios.get(this.url + '/setting-price?type='+type, {
+          headers:{
+          'Content-Type': 'application/json',
+          'Authorization' : this.state.token
+          }
+      })
+  
+      if(response.data.status == 'success'){
+          var data = response.data.data
+          data.title = type == 'interested' ? 'Perekrutan Helper x1' : type == 'tax' ? 'Pajak' : ''
+          arr.push(data)
+
+          var total = this.state.total_price
+          total += data.price
+
+          await this.setState({price_data : arr, total_price : total})
+      }
+    }
+    catch(e){
+        console.log(e)
+    }
+  }
+
   item = (item) => {
     return (
       <View row>
@@ -165,19 +263,22 @@ class CheckOut extends Component {
             Total
           </Text>
           <Text lilbit primary right style={{ flex: 1 }}>
-            Rp. [Total]
+            Rp. {this.state.total_price}
           </Text>
         </View>
       </View>
     );
   };
 
+  async toPayment(){
+    this.props.navigation.navigate("Payment", {total_price : this.state.total_price})
+  }
+
   render() {
     const list = [
       { id: 0, title: "Perekrutan Helper x1", price: "1.000.000" },
       { id: 1, title: "Pajak", price: "100.000" },
     ];
-    const { navigate } = this.props.navigation;
     return (
       <View style={styles.parent}>
         <ScrollView style={{ flex: 1 }}>
@@ -192,7 +293,7 @@ class CheckOut extends Component {
             shadow
           >
             <FlatList
-              data={list}
+              data={this.state.price_data}
               renderItem={({ item }) => this.item(item)}
               keyExtractor={(item) => item.id}
               ListFooterComponent={() => this.itemFooter()}
@@ -207,7 +308,7 @@ class CheckOut extends Component {
           color={theme.colors.white}
           style={{ elevation: 6 }}
         >
-          <Button color="secondary" onPress={() => navigate("Payment")}>
+          <Button color="secondary" onPress={() => this.toPayment()}>
             <Text white center>
               LANJUT
             </Text>
@@ -218,7 +319,7 @@ class CheckOut extends Component {
   }
 }
 
-class PaymentGateway extends Component {
+class PaymentGateway extends Base {
   static navigationOptions = {
     title: "Payment",
   };
@@ -267,7 +368,7 @@ class PaymentGateway extends Component {
   }
 }
 
-class PaymentStatus extends Component {
+class PaymentStatus extends Base {
   static navigationOptions = {
     title: 'Payment Status'
   }

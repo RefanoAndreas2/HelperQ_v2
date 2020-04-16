@@ -7,6 +7,7 @@ import {
   FlatList,
   Alert,
   TouchableWithoutFeedback,
+  AsyncStorage,
 } from "react-native";
 import {
   Text,
@@ -27,16 +28,18 @@ import Collapsible from "react-native-collapsible";
 
 import { StackActions, NavigationActions } from "react-navigation";
 import Animated, { Easing } from "react-native-reanimated";
+import Base from '../../Utils/Base'
+import moment from 'moment'
 
 const dummy = mocks.detailHelperMocks;
 
-class Separator extends Component {
+class Separator extends Base {
   render() {
     return <View color={theme.colors.black_t90} height={1}></View>;
   }
 }
 
-class HeadContent extends Component {
+class HeadContent extends Base {
   render() {
     return (
       <View>
@@ -63,15 +66,15 @@ class HeadContent extends Component {
           space={"between"}
         >
           <Text white caption>
-            {dummy.kategori}
+            {this.props.data.helper_sub_category.name}
           </Text>
           <Text white caption>
-            Gaji : Rp. {dummy.gaji}
+            Gaji : Rp. {this.props.data.requested_price}
           </Text>
         </View>
         <View padding={theme.sizes.base * 1.5} center>
           <Text h3 ellipsizeMode={"tail"} numberOfLines={1}>
-            Bambang Gunawan
+            {this.props.data.name}
           </Text>
           <AirbnbRating
             showRating={false}
@@ -94,10 +97,10 @@ function Arrow({ context }) {
   );
 }
 
-class DetailProfil extends Component {
+class DetailProfil extends Base {
   constructor(props) {
-    super(props);
-    this.state = {};
+    super(props)
+    this.state = {}
   }
 
   item = ({ title, value }) => {
@@ -116,13 +119,13 @@ class DetailProfil extends Component {
 
   render() {
     const list = [
-      { title: "Nama Lengkap", value: "[Nama]" },
-      { title: "Email", value: "[Email]" },
-      { title: "Jenis Kelamin", value: "[Jenis]" },
-      { title: "Tempat Lahir", value: "[Tempat]" },
-      { title: "Tanggal Lahir", value: "[Tanggal]" },
-      { title: "No.Telp", value: "[Telp]" },
-      { title: "Alamat", value: "[Alamat]" },
+      { title: "Nama Lengkap", value: this.props.data.name },
+      { title: "Email", value: this.props.data.email },
+      { title: "Jenis Kelamin", value: this.props.data.gender == 1 ? 'Laki - Laki' : 'Perempuan' },
+      { title: "Tempat Lahir", value: this.props.data.birth_place.name },
+      { title: "Tanggal Lahir", value: moment(this.props.data.birth_date).format('DD MMM YYYY') },
+      { title: "No.Telp", value: this.props.data.phone == null ? '-' : this.props.data.phone },
+      { title: "Alamat", value: this.props.data.address == null ? '-' : this.props.data.address },
     ];
     return (
       <Collapse title={"Profile"} leftIcon={"face"}>
@@ -139,7 +142,7 @@ class DetailProfil extends Component {
   }
 }
 
-class DetailDetail extends Component {
+class DetailDetail extends Base {
   constructor(props) {
     super(props);
     this.state = {};
@@ -162,12 +165,12 @@ class DetailDetail extends Component {
   render() {
     const list = [
       { title: "Pengalaman Kerja", value: dummy.detail.pengalaman + " tahun" },
-      { title: "Gaji per Bulan", value: "Rp. " + dummy.detail.gaji },
+      { title: "Gaji per Bulan", value: "Rp. " + this.props.data.requested_price },
       { title: "Biaya administrasi", value: "Rp. " + dummy.detail.biayaAdmin },
-      { title: "Menginap", value: dummy.detail.menginap },
-      { title: "Takut anjing", value: dummy.detail.takutAnjing },
-      { title: "Pengalaman kerja luar negeri", value: dummy.detail.luarNegeri },
-      { title: "Mengerti Bahasa Inggris", value: dummy.detail.bahasaInggris },
+      { title: "Menginap", value: this.props.data.could_live_in ? 'Ya' : 'Tidak' },
+      { title: "Takut anjing", value: this.props.data.is_afraid_dog ? 'Ya' : 'Tidak' },
+      { title: "Pengalaman kerja luar negeri", value: this.props.data.have_work_abroad ? 'Ya' : 'Tidak' },
+      { title: "Mengerti Bahasa Inggris", value: this.props.data.is_understood_english ? 'Ya' : 'Tidak' },
     ];
     return (
       <Collapse title={"detail"} leftIcon={"assignment"}>
@@ -192,10 +195,10 @@ class DetailDetail extends Component {
           </Text>
         </View>
         <FlatList
-          data={dummy.detail.penempatan}
+          data={this.props.data.work_at}
           renderItem={({ item, index }) => (
             <Text lilbit bold style={{ flex: 1 }}>
-              {index + 1 + ". " + item.title}
+              {index + 1 + ". " + item.city.name}
             </Text>
           )}
           scrollEnabled={false}
@@ -208,7 +211,7 @@ class DetailDetail extends Component {
   }
 }
 
-class Keterampilan extends Component {
+class Keterampilan extends Base {
   constructor(props) {
     super(props);
     this.state = {};
@@ -218,10 +221,10 @@ class Keterampilan extends Component {
     return (
       <Collapse title={"keterampilan kerja"} leftIcon={"accessible"}>
         <FlatList
-          data={dummy.keterampilan}
+          data={this.props.data_skill}
           renderItem={({ item, index }) => (
             <Text lilbit bold style={{ flex: 1 }}>
-              {index + 1 + ". " + item.title}
+              {index + 1 + ". " + item.skill.name}
             </Text>
           )}
           scrollEnabled={false}
@@ -234,7 +237,7 @@ class Keterampilan extends Component {
   }
 }
 
-class RiwayatPekerjaan extends Component {
+class RiwayatPekerjaan extends Base {
   constructor(props) {
     super(props);
     this.state = {};
@@ -244,10 +247,10 @@ class RiwayatPekerjaan extends Component {
     return (
       <Collapse title={"riwayat pekerjaan"} leftIcon={"work"}>
         <FlatList
-          data={dummy.riwayatPekerjaan}
+          data={this.props.data_job_history}
           renderItem={({ item }) => (
             <Text lilbit bold style={{ flex: 1 }}>
-              {"- " + item.title}
+              {"- " + item.name + ' (' + item.from_year + ' - ' + item.to_year + ')'}
             </Text>
           )}
           scrollEnabled={false}
@@ -258,7 +261,7 @@ class RiwayatPekerjaan extends Component {
   }
 }
 
-class RiwayatKesehatan extends Component {
+class RiwayatKesehatan extends Base {
   constructor(props) {
     super(props);
     this.state = {};
@@ -268,10 +271,10 @@ class RiwayatKesehatan extends Component {
     return (
       <Collapse title={"riwayat kesehatan"} leftIcon={"healing"}>
         <FlatList
-          data={dummy.riwayatPekerjaan}
+          data={this.props.data_health_history}
           renderItem={({ item }) => (
             <Text lilbit bold style={{ flex: 1 }}>
-              {"- " + item.title}
+              {"- " + item.name}
             </Text>
           )}
           scrollEnabled={false}
@@ -282,7 +285,7 @@ class RiwayatKesehatan extends Component {
   }
 }
 
-class Review extends Component {
+class Review extends Base {
   constructor(props) {
     super(props);
     this.state = {
@@ -294,8 +297,8 @@ class Review extends Component {
     return (
       <View>
         <View row space={"between"}>
-          <Text bold>{item.majikan}</Text>
-          <Text caption>{item.tanggal}</Text>
+          <Text bold>{item.user.name}</Text>
+          <Text caption>{moment(item.createdAt).format('DD MMM YYYY')}</Text>
         </View>
         <View wrap pointerEvents="none" marginBottom={theme.sizes.base / 2}>
           <AirbnbRating
@@ -303,9 +306,10 @@ class Review extends Component {
             isDisabled={true}
             showRating={false}
             defaultRating={item.rating}
+            count={5}
           />
         </View>
-        <Text lilbit>{item.desc}</Text>
+        <Text lilbit>{item.review}</Text>
       </View>
     );
   };
@@ -314,7 +318,7 @@ class Review extends Component {
     return (
       <Collapse title={"review & ratings"} leftIcon={"email"}>
         <FlatList
-          data={dummy.review}
+          data={this.props.data_rating}
           renderItem={({ item }) => <this.item item={item} />}
           scrollEnabled={false}
           ItemSeparatorComponent={() => (
@@ -328,7 +332,7 @@ class Review extends Component {
   }
 }
 
-class DetailContact extends Component {
+class DetailContact extends Base {
   constructor(props) {
     super(props);
     this.state = {};
@@ -371,13 +375,58 @@ class DetailContact extends Component {
   }
 }
 
-export default class DetailHelper extends Component {
+export default class DetailHelper extends Base {
+  state = {
+    token : '',
+    data_helper : {helper_sub_category : {name : ''}, birth_place : {name : ''}},
+    user_type : '',
+  }
+
   static navigationOptions = {
     title: "Detail Helper",
   };
 
-  alert() {
-    const { navigate } = this.props.navigation;
+  async componentDidMount(){
+    var token = await AsyncStorage.getItem('token')
+    var user_type = await AsyncStorage.getItem('user_type')
+    await this.setState({token : token, user_type : user_type})
+
+    await this.get_data()
+  }
+
+  async get_data(){
+    try{
+      var response = await this.axios.get(this.url + '/user?id='+this.props.navigation.state.params.id, {
+          headers:{
+          'Content-Type': 'application/json',
+          'Authorization' : this.state.token
+          }
+      })
+  
+      if(response.data.status == 'success'){
+          var data = response.data.data
+          
+          data.verified_at_format = data.verified_at == null ? '-' : moment(data.verified_at).format('DD MMM YYYY')
+
+          var photo_list = data.photo_list
+          
+          // for(var x in photo_list){
+          //   photo_list[x].image_display = {uri : this.url + '/images/user?file_name=' + photo_list[x].file_name}
+          // }
+
+          // await AsyncStorage.setItem('dataHelperDetail', JSON.stringify(data))
+          await this.setState({data_helper : data})
+      }
+    }
+    catch(e){
+        Snackbar.show({
+            text: e,
+            duration: Snackbar.LENGTH_SHORT,
+        })
+    }
+  }
+
+  async alert() {
     Alert.alert(
       "Konfirmasi",
       "Apakah anda yakin ingin merekrut helper ini?",
@@ -388,10 +437,15 @@ export default class DetailHelper extends Component {
           // onPress: () => console.log('Cancel Pressed'),
           style: "cancel",
         },
-        { text: "OK", onPress: () => navigate("CheckOut") },
+        { text: "OK", onPress: () => this.toCheckout() },
       ],
       { cancelable: false }
     );
+  }
+
+  async toCheckout(){
+    await AsyncStorage.setItem('helperData', JSON.stringify(this.state.data_helper))
+    this.props.navigation.navigate("CheckOut")
   }
 
   bottomButton = ({ title, onPress }) => {
@@ -421,8 +475,8 @@ export default class DetailHelper extends Component {
     return navigateFrom == "PaymentGateway" ? (
       <View style={styles.parent}>
         <ScrollView style={styles.parent}>
-          <HeadContent />
-          <DetailContact />
+          <HeadContent data={this.state.data_helper} />
+          <DetailContact data={this.state.data_helper} />
         </ScrollView>
         <this.bottomButton
           onPress={() => dispatch(toOrder)}
@@ -432,18 +486,21 @@ export default class DetailHelper extends Component {
     ) : (
       <View style={styles.parent}>
         <ScrollView style={styles.parent}>
-          <HeadContent />
-          <DetailProfil />
-          <DetailDetail />
-          <Keterampilan />
-          <RiwayatPekerjaan />
-          <RiwayatKesehatan />
-          <Review />
+          <HeadContent data={this.state.data_helper} />
+          <DetailProfil data={this.state.data_helper} />
+          <DetailDetail data={this.state.data_helper} />
+          <Keterampilan data_skill={this.state.data_helper.skill} />
+          <RiwayatPekerjaan data_job_history={this.state.data_helper.job_history} />
+          <RiwayatKesehatan data_health_history={this.state.data_helper.health_history} />
+          <Review data_rating={this.state.data_helper.rating} />
         </ScrollView>
-        <this.bottomButton
-          onPress={() => this.alert()}
-          title={"REKRUT SEKARANG"}
-        />
+        {
+          this.state.user_type == 'Helper' || this.state.user_type == '' ? <></> : 
+          <this.bottomButton
+            onPress={() => this.alert()}
+            title={"REKRUT SEKARANG"}
+          />
+        }
       </View>
     );
   }

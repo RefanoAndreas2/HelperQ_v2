@@ -42,6 +42,8 @@ export default class Login extends Base {
 
       if(response.data.status == 'success'){
         await AsyncStorage.setItem('token', response.data.token)
+        await AsyncStorage.setItem('user_type', response.data.type_data.name)
+
         this.props.navigation.navigate('Home')
       }
     }

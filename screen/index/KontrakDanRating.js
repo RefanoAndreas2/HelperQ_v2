@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   BackHandler,
   FlatList,
+  AsyncStorage,
 } from "react-native";
 import {
   Text,
@@ -23,14 +24,16 @@ import MDIcon from "react-native-vector-icons/MaterialIcons";
 import { AirbnbRating, Rating } from "react-native-ratings";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { StackActions, NavigationActions } from "react-navigation";
+import Base from '../../Utils/Base'
+import moment from 'moment'
 
-class Separator extends Component {
+class Separator extends Base {
   render() {
     return <View color={theme.colors.black_t90} height={1}></View>;
   }
 }
 
-class ContactButton extends Component {
+class ContactButton extends Base {
   constructor(props) {
     super(props);
     this.state = {};
@@ -139,7 +142,7 @@ class ContactButton extends Component {
   }
 }
 
-class BottomBtn extends Component {
+class BottomBtn extends Base {
   alert() {
     const { navigate } = this.props.navigation;
     Alert.alert(
@@ -171,7 +174,7 @@ class BottomBtn extends Component {
   }
 }
 
-class InfoHelper extends Component {
+class InfoHelper extends Base {
   render() {
     return (
       <View>
@@ -199,7 +202,7 @@ class InfoHelper extends Component {
   }
 }
 
-class InfoKontrakKerja extends Component {
+class InfoKontrakKerja extends Base {
   render() {
     return (
       <View>
@@ -225,7 +228,7 @@ class InfoKontrakKerja extends Component {
   }
 }
 
-class InfoPembayaran extends Component {
+class InfoPembayaran extends Base {
   footer() {
     return (
       <View paddingTop={theme.sizes.base}>
@@ -267,7 +270,7 @@ class InfoPembayaran extends Component {
   }
 }
 
-class ReviewRating extends Component {
+class ReviewRating extends Base {
   constructor(props) {
     super(props);
     this.inputs = {};
@@ -383,23 +386,13 @@ class ReviewRating extends Component {
   }
 }
 
-class KontrakKerja extends Component {
+class KontrakKerja extends Base {
   constructor(props) {
     super(props);
     this.state = {
       navigateFrom: "",
       statusKontrak: "",
-      infoHelper: [
-        { id: 0, title: "Nama", desc: mocks.detailHelperMocks.nama },
-        { id: 1, title: "Kategori", desc: mocks.detailHelperMocks.kategori },
-        { id: 2, title: "Gaji", desc: mocks.detailHelperMocks.gaji },
-        {
-          id: 3,
-          title: "Lokasi Saat ini",
-          desc: mocks.detailHelperMocks.profile.lokasi,
-        },
-        { id: 4, title: "Umur", desc: mocks.detailHelperMocks.profile.umur },
-      ],
+      infoHelper: [],
       infoKontrakKerja: [
         { id: 0, title: "ID Kontrak Kerja", desc: "HQ-Q1" },
         { id: 1, title: "Tgl Terbuat", desc: new Date().toDateString() },
@@ -411,19 +404,10 @@ class KontrakKerja extends Component {
           desc: "Rp. " + mocks.detailHelperMocks.gaji,
         },
       ],
-      infoPembayaran: [
-        { id: 0, title: "Tipe pembayaran", desc: "[tipe]" },
-        {
-          id: 1,
-          title: "Gaji Pokok",
-          desc: "Rp. " + mocks.detailHelperMocks.gaji,
-        },
-        {
-          id: 2,
-          title: "Administrasi",
-          desc: "Rp. " + mocks.detailHelperMocks.detail.biayaAdmin,
-        },
-      ],
+      infoPembayaran: [],
+
+      token : '',
+      contract_detail : {},
     };
   }
 
@@ -434,12 +418,49 @@ class KontrakKerja extends Component {
   };
 
   async componentDidMount() {
-    this.setState({
-      navigateFrom: this.props.navigation.getParam("navigateFrom"),
-    });
-    this.setState({
-      statusKontrak: this.props.navigation.getParam("statusKontrak"),
-    });
+    await this.setState({navigateFrom: this.props.navigation.getParam("navigateFrom"), statusKontrak: this.props.navigation.getParam("statusKontrak")});
+
+    var token = await AsyncStorage.getItem('token')
+    await this.setState({token : token})
+
+    await this.get_data()
+  }
+
+  async get_data(){
+    try{
+      var response = await this.axios.get(this.url + '/order-interested?id='+this.props.navigation.state.params.id,{
+        headers:{
+          'Content-Type': 'application/json',
+          'Authorization' : this.state.token
+        }
+      })
+
+      if(response.data.status == 'success'){
+        var data = response.data.data
+
+        var birth_date = moment(data.helper.birth_date).format()
+        data.helper.age = (birth_date == null) ? '-' : moment().diff(birth_date, 'years')
+
+        var infoHelper = [
+          { id: 0, title: "Nama", desc: data.helper.name },
+          { id: 1, title: "Kategori", desc: data.helper.helper_sub_category.name },
+          { id: 2, title: "Gaji", desc: data.helper.requested_price },
+          { id: 3, title: "Lokasi Saat ini", desc: data.helper.city.name },
+          { id: 4, title: "Umur", desc: data.helper.age + ' Tahun' }
+        ]
+
+        var infoPayment = [
+          { id: 0, title: "Tipe pembayaran", desc: data.payment_method.name },
+          { id: 1, title: "Gaji Pokok", desc: "Rp. " },
+          { id: 2, title: "Administrasi", desc: "Rp. " + data.price },
+        ]
+
+        await this.setState({contract_detail : data, infoHelper : infoHelper, infoPembayaran : infoPayment})
+      }
+    }
+    catch(e){
+      console.log(e)
+    }
   }
 
   render() {
@@ -453,7 +474,7 @@ class KontrakKerja extends Component {
                 Status
               </Text>
               <Text secondary bold right>
-                Menunggu Respon Helper
+                {this.state.contract_detail.interested_status == 'wait' ? 'Menunggu Respon Helper' : this.state.contract_detail.interested_status == 'accept' ? 'Diterima' : this.state.contract_detail.interested_status == 'decline' ? 'Ditolak' : ''}
               </Text>
             </View>
             <Separator />
@@ -462,7 +483,7 @@ class KontrakKerja extends Component {
                 Tanggal Rekrut
               </Text>
               <Text right>
-                {new Date().toDateString()}
+                {moment(this.state.created_at).format('DD MMM YYYY')}
               </Text>
             </View>
             {this.state.navigateFrom == "OrderKontrakKerja" && (
@@ -473,7 +494,7 @@ class KontrakKerja extends Component {
                   Tanggal Kontrak
                 </Text>
                 <Text right>
-                  {new Date().toDateString()}
+                  {moment(this.state.created_at).format('DD MMM YYYY')}
                 </Text>
               </View>
               </>
@@ -507,7 +528,7 @@ class KontrakKerja extends Component {
               </>
             )}
             <Separator />
-            <Touch onPress={() => navigate('DetailHelper')}>
+            <Touch onPress={() => navigate('DetailHelper', {id : this.state.contract_detail.helper.id})}>
               <View row space={"between"} padding={theme.sizes.base}>
                 <Text bold style={{ flex: 1 }}>
                   View More

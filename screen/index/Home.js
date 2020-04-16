@@ -268,9 +268,14 @@ class MainHome extends Base {
   }
   
   async componentDidMount(){
+    // await AsyncStorage.clear()
     var token = await AsyncStorage.getItem('token')
     await this.setState({token : token})
     console.log(token)
+
+    if(token == null){
+      this.props.navigation.navigate('Login')
+    }
 
     await this.get_dataBanner()
     await this.get_data()
@@ -348,7 +353,7 @@ class MainHome extends Base {
   }
 
   async selectHelper(index){
-    this.props.navigation.navigate("DetailHelper", {id : this.state.data_arr[index]})
+    this.props.navigation.navigate("DetailHelper", {id : this.state.data_arr[index].id})
   }
 
   async selectedTab(index){
