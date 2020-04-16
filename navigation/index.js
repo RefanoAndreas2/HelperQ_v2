@@ -26,37 +26,38 @@ import {
 
 import { 
   AllList,
-  MainHome,
   CheckOut,
   DetailHelper,
   Filter,
+  KontrakKerja,
+  MainHome,
+  MainProfile,
   Notification,
   OrderKontrakKerja,
   OrderListHelper,
   Payment,
   PaymentGateway,
+  PaymentStatus,
   ProfileHelper,
   ProfileMajikan,
-  MainProfile,
   ReviewRating,
   Verified,
-  KontrakKerja,
-  PaymentStatus
 } from '../screen/index'
 
 import {
-  Verifikasi,
-  PrivacyPolicy,
-  TermsAndCondition,
   ChangePassword,
+  ListFoto,
+  PrivacyPolicy,
   Settings,
-  ViewRiwayatPekerjaan,
-  ViewRiwayatKesehatan,
+  TermsAndCondition,
+  Verifikasi,
   ViewData,
-  ViewProfile,
+  ViewDokumen,
   ViewGeneral,
   ViewKeterampilan,
-  ViewDokumen
+  ViewProfile,
+  ViewRiwayatKesehatan,
+  ViewRiwayatPekerjaan,
 } from '../screen/profile'
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -351,6 +352,7 @@ const indexBottomTab = createBottomTabNavigator({
 })
 
 const indexStack = createStackNavigator({
+  ListFoto,
   ViewData,
   indexBottomTab:{
     screen: indexBottomTab,
@@ -381,8 +383,8 @@ const indexStack = createStackNavigator({
 },titleStyle)
 
 const switcher = createSwitchNavigator({
-  authStack,
   indexStack,
+  authStack,
   formStack,
 },{
   defaultNavigationOptions:{

@@ -1,26 +1,28 @@
-import ViewData from './ViewData'
-import ViewDokumen from './ViewDokumen'
-import ViewGeneral from './ViewGeneral'
-import ViewKeterampilan from './ViewKeterampilan'
-import ViewProfile from './ViewProfile'
-import ViewRiwayatKesehatan from './ViewRiwayatKesehatan'
-import ViewRiwayatPekerjaan from './ViewRiwayatPekerjaan'
-import Settings from './Settings'
-import ChangePassword from './ChangePassword'
-import Verifikasi from './Verifikasi'
-import {PrivacyPolicy, TermsAndCondition} from './PolicyAndTerms'
+import { PrivacyPolicy, TermsAndCondition } from "./PolicyAndTerms";
+import ChangePassword from "./ChangePassword";
+import ListFoto from "./ListFoto";
+import Settings from "./Settings";
+import Verifikasi from "./Verifikasi";
+import ViewData from "./ViewData";
+import ViewDokumen from "./ViewDokumen";
+import ViewGeneral from "./ViewGeneral";
+import ViewKeterampilan from "./ViewKeterampilan";
+import ViewProfile from "./ViewProfile";
+import ViewRiwayatKesehatan from "./ViewRiwayatKesehatan";
+import ViewRiwayatPekerjaan from "./ViewRiwayatPekerjaan";
 
 export {
-  Verifikasi,
-  PrivacyPolicy,
-  TermsAndCondition,
   ChangePassword,
+  ListFoto,
+  PrivacyPolicy,
   Settings,
-  ViewRiwayatPekerjaan,
-  ViewRiwayatKesehatan,
+  TermsAndCondition,
+  Verifikasi,
   ViewData,
   ViewDokumen,
   ViewGeneral,
   ViewKeterampilan,
   ViewProfile,
-}
+  ViewRiwayatKesehatan,
+  ViewRiwayatPekerjaan,
+};
