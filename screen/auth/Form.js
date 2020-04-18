@@ -1189,7 +1189,7 @@ class UploadFotoProfil extends Base {
       data.email = userData.email
       data.phone = userData.phone
       data.gender = userData.gender
-      data.tribe = userData.tribes
+      data.tribes = userData.tribes
       data.religion = userData.religion
       data.marital_status = userData.marital_status
       data.have_children = userData.have_children
