@@ -36,6 +36,19 @@ export default class ListFoto extends Component {
     this.state = {};
   }
 
+  static navigationOptions = ({ navigation }) => ({
+    title: "List Foto",
+    headerStyle: {
+      backgroundColor: "white",
+      color: theme.colors.primary,
+    },
+    headerTitleStyle: {
+      color: theme.colors.primary,
+      fontWeight: "bold",
+    },
+    headerTintColor: theme.colors.primary,
+  });
+
   componentDidMount() {}
 
   render() {
@@ -48,11 +61,11 @@ export default class ListFoto extends Component {
             <View flex={1 / 3}>
               <View padding={theme.sizes.base/2}>
                 <View radius={theme.sizes.base/2} ovHidden >
-                    <Touch onPress={() => null}>
-                      <View ratio={1} radius={theme.sizes.base/2} center middle style={{borderWidth: 2, borderColor: theme.colors.black_t90, borderStyle: 'dashed'}}>
-                        <Icon name={'add-circle'} size={theme.sizes.base*2} color={theme.colors.black_t90}/>
-                      </View>
-                    </Touch>
+                  <Touch onPress={() => null}>
+                    <View ratio={1} radius={theme.sizes.base/2} center middle style={{borderWidth: 2, borderColor: theme.colors.black_t90, borderStyle: 'dashed'}}>
+                      <Icon name={'add-circle'} size={theme.sizes.base*3} color={theme.colors.black_t60}/>
+                    </View>
+                  </Touch>
                 </View>
               </View>
             </View>
@@ -110,7 +123,7 @@ export default class ListFoto extends Component {
           )}
           keyExtractor={(item) => item.id}
           numColumns={3}
-          style={{ marginTop: theme.sizes.base * 0.5 }}
+          style={{ marginTop: theme.sizes.base * 0.5, paddingHorizontal: theme.sizes.base/2}}
         />
         <View
           color={"white"}

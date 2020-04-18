@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from 'lodash'
 
 const helper = [
-  {id: 0, icon: 'lock', title: 'List Foto', navigate: ''},
+  {id: 0, icon: 'lock', title: 'List Foto', navigate: 'ListFoto'},
   {id: 1, icon: 'lock', title: 'View Profile', navigate: 'ViewProfile'},
   {id: 2, icon: 'lock', title: 'View General Info', navigate: 'ViewGeneral'},
   {id: 3, icon: 'lock', title: 'Keterampilan Kerja', navigate: 'ViewKeterampilan'},

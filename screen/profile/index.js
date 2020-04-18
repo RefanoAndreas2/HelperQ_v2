@@ -1,6 +1,7 @@
 import { PrivacyPolicy, TermsAndCondition } from "./PolicyAndTerms";
 import ChangePassword from "./ChangePassword";
 import ListFoto from "./ListFoto";
+import ListMajikan from './ListMajikan'
 import Settings from "./Settings";
 import Verifikasi from "./Verifikasi";
 import ViewData from "./ViewData";
@@ -14,6 +15,7 @@ import ViewRiwayatPekerjaan from "./ViewRiwayatPekerjaan";
 export {
   ChangePassword,
   ListFoto,
+  ListMajikan,
   PrivacyPolicy,
   Settings,
   TermsAndCondition,

@@ -282,7 +282,7 @@ class MainProfile extends Component {
     // const list  = _.filter(menuList, {role: ['majikan']})
     // console.log(list)
     try {
-      // await AsyncStorage.setItem('ASYNC_ROLE', 'helper')
+      await AsyncStorage.setItem('ASYNC_ROLE', 'majikan')
       const role = await AsyncStorage.getItem("ASYNC_ROLE");
       this.setState({ async_role: role });
       this.render();

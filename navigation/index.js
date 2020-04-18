@@ -47,6 +47,7 @@ import {
 import {
   ChangePassword,
   ListFoto,
+  ListMajikan,
   PrivacyPolicy,
   Settings,
   TermsAndCondition,
@@ -140,8 +141,8 @@ const authStack = createStackNavigator({
 )
 
 const formStack = createStackNavigator({
-  NamaLengkap,
   Kategori,
+  NamaLengkap,
   KeturunanSuku,
   PengalamanKerja,
   Penempatan,
@@ -352,20 +353,21 @@ const indexBottomTab = createBottomTabNavigator({
 })
 
 const indexStack = createStackNavigator({
-  ListFoto,
-  ViewData,
+  ListMajikan,
   indexBottomTab:{
     screen: indexBottomTab,
     navigationOptions: {
       headerShown: false
     }
   },
+  Verifikasi,
+  ViewData,
   ViewProfile,
+  ListFoto,
   DetailHelper,
   KontrakKerja,
   PaymentStatus,
   Payment,
-  Verifikasi,
   Settings,
   TermsAndCondition,
   PrivacyPolicy,

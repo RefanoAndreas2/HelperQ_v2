@@ -20,9 +20,18 @@ export default class ViewDokumen extends Component {
     };
   }
   
-  static navigationOptions = ({navigation}) => ({
-    title: 'Settings',
-  })
+  static navigationOptions = ({ navigation }) => ({
+    title: "Settings",
+    headerStyle: {
+      backgroundColor: 'white',
+      color: theme.colors.primary
+    },
+    headerTitleStyle: {
+      color: theme.colors.primary,
+      fontWeight: 'bold'
+    },
+    headerTintColor: theme.colors.primary
+  });
 
   async componentDidMount(){
     try {
@@ -38,19 +47,29 @@ export default class ViewDokumen extends Component {
     const {navigate} = this.props.navigation
     return (
       <View style={styles.parent}>
-        <FlatList
-          data={helper.keterampilan}
-          renderItem={({item, index}) =>
-            <Touch onPress={() => navigate(item.navigate)}>
-              <View key={item.id} padding={theme.sizes.base} center row space={'between'}>
-                <Text>{item.title}</Text>
-                <Icon name={'chevron-right'} size={theme.sizes.base*1.5}/>
-              </View>
-            </Touch>
-          }
-          keyExtractor={item => item.id}
-          ItemSeparatorComponent={() => <View height={1} color={theme.colors.black_t90}/>}
-        />
+        <View color={'white'} shadow marginTop={theme.sizes.base}>
+          <FlatList
+            data={helper.keterampilan}
+            renderItem={({item, index}) =>
+              <Touch onPress={() => navigate(item.navigate)}>
+                <View key={item.id} padding={theme.sizes.base} center row space={'between'}>
+                  <Text>{item.title}</Text>
+                  <Icon name={'chevron-right'} size={theme.sizes.base*1.5}/>
+                </View>
+              </Touch>
+            }
+            keyExtractor={item => item.id}
+            ItemSeparatorComponent={() => <View height={1} color={theme.colors.black_t90}/>}
+          />
+        </View>
+        <View color={'white'} shadow marginTop={theme.sizes.base}>
+          <Touch>
+            <View padding={theme.sizes.base} center row space={'between'}>
+              <Text>Beri Kami Penilaian</Text>
+              <Icon name={'chevron-right'} size={theme.sizes.base*1.5}/>
+            </View>
+          </Touch>
+        </View>
       </View>
     )
   }
