@@ -141,13 +141,14 @@ const authStack = createStackNavigator({
 )
 
 const formStack = createStackNavigator({
+  UploadKtp,
+  NamaLengkap,
   Kategori,
   NamaLengkap,
   KeturunanSuku,
   PengalamanKerja,
   Penempatan,
   Keterampilan,
-  UploadKtp,
   UploadFotoProfil,
 },{
   defaultNavigationOptions:{
@@ -385,9 +386,9 @@ const indexStack = createStackNavigator({
 },titleStyle)
 
 const switcher = createSwitchNavigator({
-  indexStack,
-  authStack,
   formStack,
+  authStack,
+  indexStack,
 },{
   defaultNavigationOptions:{
   }

@@ -22,18 +22,21 @@ import CheckBox from 'react-native-check-box'
 import _ from 'lodash'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { StackActions, NavigationActions } from 'react-navigation';
+import Base from '../../Utils/Base'
+import moment from 'moment'
+import ImagePicker from 'react-native-image-picker'
 
-
-
-
-
-class Kategori extends Component {
+class Kategori extends Base {
   constructor(props) {
     super(props);
     this.state = {
       modalSistem:true,
       sistemKerja: '',
-      kategori: mocks.categories
+      kategori: mocks.categories,
+      token : '',
+      category_arr : [],
+      selected_category : {},
+      sub_category : [],
     };
   }
 
@@ -41,7 +44,7 @@ class Kategori extends Component {
     title: 'Kategori Pekerjaan',
   }
 
-  componentDidMount(){
+  async componentDidMount(){
     // const reset = StackActions.reset({
     //   index: 0,
     //   actions: [NavigationActions.navigate({routeName: 'Kategori'})]
@@ -49,6 +52,40 @@ class Kategori extends Component {
     // this.props.navigation.dispatch(reset)
     // await this.setState({kategori: this.props.categories})
     // const a = await AsyncStorage.getAllKeys()
+
+    var token = await AsyncStorage.getItem('token')
+    await this.setState({token : token})
+    
+    await this.get_category()
+  }
+
+  async get_category(){
+    try{
+        var response = await this.axios.get(this.url + '/helper-category', {
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        })
+        if(response.data.status == 'success'){
+            var data = response.data.data.data
+            await this.setState({category_arr : data})
+        }
+    }
+    catch(e){
+        console.log(e)
+    }
+  }
+
+  async chooseCategory(index){
+    await this.setState({modalSistem: !this.state.modalSistem, selected_category: this.state.category_arr[index], sub_category : this.state.category_arr[index].helper_sub_category})
+    // this.setState({modalSistem: !this.state.modalSistem, sistemKerja: 'kontrak'})
+  }
+
+  async selectSubCategory(index){
+    var arr = {}
+    arr.helper_sub_category = this.state.sub_category[index]
+    await AsyncStorage.setItem('registerData', JSON.stringify(arr))
+    this.props.navigation.navigate('NamaLengkap')
   }
 
   render(){
@@ -56,7 +93,6 @@ class Kategori extends Component {
     const kategori = this.state.kategori
     const kontrak = _.filter(kategori, {kategori: 'kontrak'})
     const kasual = _.filter(kategori, {kategori: 'kasual'})
-    // console.log(kontrak)
     return(
       <ScrollView style={{flex: 1, backgroundColor: 'white'}}>
         {this.state.modalSistem ? null :
@@ -71,18 +107,11 @@ class Kategori extends Component {
         }
         {this.state.modalSistem ? null :
           <View padding={[0, theme.sizes.base]}>
-            { this.state.sistemKerja == 'kontrak' ?
-              kontrak.map(kontrakData => (
-                <View key={kontrakData.id} margin={[theme.sizes.base/2, 0]}>
-                  <Button color='primary' onPress={() => navigate('NamaLengkap')}>
-                    <Text white bold center>{kontrakData.title}</Text>
-                  </Button>
-                </View>
-              )):
-              kasual.map(kasualData => (
-                <View key={kasualData.id} margin={[theme.sizes.base/2, 0]}>
-                  <Button color='primary' onPress={() => navigate('NamaLengkap')}>
-                    <Text white bold center>{kasualData.title}</Text>
+            {
+              this.state.sub_category.map((data, index)=>(
+                <View key={data.id} margin={[theme.sizes.base/2, 0]}>
+                  <Button color='primary' onPress={() => this.selectSubCategory(index)}>
+                    <Text white bold center>{data.name}</Text>
                   </Button>
                 </View>
               ))
@@ -100,24 +129,19 @@ class Kategori extends Component {
                 <Text center>Pilih sistem kerja</Text>
               </View>
               <View padding={theme.sizes.base*1.5}row>
-                <View flex={1} marginRight={theme.sizes.base/2}>
-                  <Button
-                    border={theme.colors.primary}
-                    ripple={theme.colors.primary_light}
-                    onPress={() => this.setState({modalSistem: !this.state.modalSistem, sistemKerja: 'kontrak'})}
-                  >
-                    <Text center bold primary>Kontrak</Text>
-                  </Button>
-                </View>
-                <View flex={1} marginRight={theme.sizes.base/2}>
-                  <Button
-                    border={theme.colors.primary}
-                    ripple={theme.colors.primary_light}
-                    onPress={() => this.setState({modalSistem: !this.state.modalSistem, sistemKerja: 'kasual'})}
-                  >
-                    <Text center bold primary>Kasual</Text>
-                  </Button>
-                </View>
+                {
+                  this.state.category_arr.map((data, index)=>(
+                    <View flex={1} key={data.id} marginRight={theme.sizes.base/2}>
+                      <Button
+                        border={theme.colors.primary}
+                        ripple={theme.colors.primary_light}
+                        onPress={() => this.chooseCategory(index)}
+                      >
+                        <Text center bold primary>{data.name}</Text>
+                      </Button>
+                    </View>
+                  )) 
+                }
               </View>
             </View>
           </View>
@@ -127,36 +151,37 @@ class Kategori extends Component {
   }
 }
 
-
-
-
-
-class NamaLengkap extends Component {
+class NamaLengkap extends Base {
   constructor(props) {
     super(props);
     this.inputs = {};
     this.state = {
-      name: '',
-      email: '',
-      genderOptions: mocks.form_NamaLengkap.gender,
-      gender: '',
-      placebirth: '',
-      datebirth: '',
-      phone: '',
-      address: '',
-      weight: '',
-      height: '',
+      genderOptions : [{id : '', title : 'Pilih Gender'}, {id : '1', title : 'Laki - Laki'}, {id : '0', title : 'Perempuan'}],
       async_role: '',
-      date: new Date(),
       datePicker: false,
+
+      token : '',
+      userData : {helper_sub_category : '', gender : '', tribes : '', blood_type : '', religion : '', education : '', marital_status : '', have_children : '', could_live_in : '', is_afraid_dog : '', have_work_abroad : '', is_understood_english : '', selected_work_at : '', selected_skill : '', city : '', birth_place : ''},
+      city_arr : [],
     };
   }
 
   async componentDidMount(){
     try{
       const async_role = await AsyncStorage.getItem('ASYNC_ROLE')
-      this.setState({async_role: async_role})
-      console.log(this.state.async_role)
+      if(async_role == 'helper'){
+        var userData = await AsyncStorage.getItem('registerData')
+        userData = JSON.parse(userData)
+        await this.setState({userData : userData})
+      }
+      await this.setState({async_role: async_role})
+
+      if(async_role == 'helper'){
+        this.props.navigation.navigate('Kategori')
+      }
+
+      this.getCity()
+
     }catch(e){
       console.error(e)
     }
@@ -170,6 +195,48 @@ class NamaLengkap extends Component {
     this.setState({datePicker: !this.state.datePicker, datebirth: selectedDate.toDateString()})
     this.inputs['inputPhone'].focus()
   }
+
+  async changeInput(value, type){
+    var user = this.state.userData
+    user[type] = value
+
+    if(type == 'birth_date'){
+      user[type] = moment(value).format('DD MMMM YYYY')
+      await this.setState({datePicker: !this.state.datePicker})
+      this.inputs['inputPhone'].focus()
+    }
+
+    await this.setState({userData : user})
+  }
+
+  async getCity(){
+    try{
+      var response = await this.axios.get(this.url + '/city/all', {
+          headers:{
+              'Content-Type': 'application/json',
+          }
+      })
+      if(response.data.status == 'success'){
+          var data = response.data.data
+          await this.setState({city_arr : data})
+      }
+  }
+  catch(e){
+      console.log(e)
+  }
+  }
+
+  async toTribes(){
+    var userData = this.state.userData
+    // if(this.state.async_role == 'helper'){
+    //   var registerData = await AsyncStorage.getItem('registerData')
+    //   registerData = JSON.parse(registerData)
+    //   userData.helper_sub_category = registerData
+    // }
+    await AsyncStorage.setItem('registerData', JSON.stringify(userData))
+    this.props.navigation.navigate('KeturunanSuku')
+  }
+
   render(){
     const {navigate} = this.props.navigation
     const genderOptions = this.state.genderOptions
@@ -185,8 +252,8 @@ class NamaLengkap extends Component {
             default
             label={'Nama Lengkap'}
             placeholder={'Nama Lengkap'}
-            value={this.state.name}
-            onChangeText={(name)=>this.setState({name: name})}
+            value={this.state.userData.name}
+            onChangeText={(value)=>this.changeInput(value, 'name')}
             blurOnSubmit={false}
             returnKeyType={'next'}
             onRef={(ref) => { this.inputs['inputName'] = ref }}
@@ -196,8 +263,8 @@ class NamaLengkap extends Component {
             email
             label={'Email'}
             placeholder={'Email'}
-            value={this.state.email}
-            onChangeText={(email)=>this.setState({email: email})}
+            value={this.state.userData.email}
+            onChangeText={(value)=>this.changeInput(value, 'email')}
             blurOnSubmit={false}
             returnKeyType={'next'}
             onRef={(ref) => { this.inputs['inputEmail'] = ref }}
@@ -205,16 +272,14 @@ class NamaLengkap extends Component {
           />
           <CustomPicker
             label={'Gender'}
-            selectedValue={this.state.gender}
+            selectedValue={this.state.userData.gender}
             style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-            onValueChange={(itemValue) =>
-              this.setState({gender: itemValue})
-            }>
-            {genderOptions.map(genderData => (
-              <Picker.Item key={genderData.id} label={genderData.title} value={genderData.id}/>
+            onValueChange={(itemValue) => this.changeInput(itemValue, 'gender')}>
+            {this.state.genderOptions.map((genderData, index) => (
+              <Picker.Item key={index} label={genderData.title} value={genderData.id}/>
             ))}
           </CustomPicker>
-          <CustomInput
+          {/* <CustomInput
             default
             label={'Tempat Lahir'}
             placeholder={'Tempat Lahir'}
@@ -224,14 +289,26 @@ class NamaLengkap extends Component {
             returnKeyType={'next'}
             onRef={(ref) => { this.inputs['inputPlacebirth'] = ref }}
             onSubmitEditing={() => this.inputs['inputDatebirth'].focus()}
-          />
+          /> */}
+
+          <CustomPicker
+            label={'Tempat Lahir'}
+            selectedValue={this.state.userData.birth_place}
+            style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
+            onValueChange={(itemValue) => this.changeInput(itemValue, 'birth_place')}>
+            <Picker.Item label={'Pilih Tempat Lahir'} value={''}/>
+            {this.state.city_arr.map((data, index) => (
+              <Picker.Item key={index} label={data.name} value={data}/>
+            ))}
+          </CustomPicker>
+          
           <CustomInput
             default
             label={'Tanggal Lahir'}
             placeholder={'Tanggal Lahir'}
-            value={this.state.datebirth}
+            value={this.state.userData.birth_date}
             onFocus={() => Keyboard.dismiss() || this.datePickerShow()}
-            onChangeText={(datebirth)=>this.setState({datebirth: datebirth})}
+            onChangeText={(datebirth)=>console.log('asdasd', datebirth)}
             blurOnSubmit={false}
             returnKeyType={'next'}
             disabled
@@ -242,18 +319,19 @@ class NamaLengkap extends Component {
             <DateTimePicker
               testID="dateTimePicker"
               timeZoneOffsetInMinutes={0}
-              value={this.state.date}
+              value={new Date()}
               mode={'date'}
               display="calendar"
-              onChange={(event, selectedDate) => this.tanggalLahir(event, selectedDate)}
+              onChange={(event, selectedDate) => this.changeInput(selectedDate, 'birth_date')}
+              // this.tanggalLahir(event, selectedDate)
             />
           }
           <CustomInput
             phone
             label={'No. Telp'}
             placeholder={'No. Telp'}
-            value={this.state.phone}
-            onChangeText={(phone)=>this.setState({phone: phone})}
+            value={this.state.userData.phone}
+            onChangeText={(value)=>this.changeInput(value, 'phone')}
             blurOnSubmit={false}
             returnKeyType={'next'}
             onRef={(ref) => { this.inputs['inputPhone'] = ref }}
@@ -266,8 +344,8 @@ class NamaLengkap extends Component {
                 rightLabel={'KG'}
                 label={'Berat Badan'}
                 placeholder={'Berat Badan'}
-                value={this.state.weight}
-                onChangeText={(weight)=>this.setState({weight: weight})}
+                value={this.state.userData.weight}
+                onChangeText={(value)=>this.changeInput(value, 'weight')}
                 blurOnSubmit={false}
                 returnKeyType={'next'}
                 onRef={(ref) => { this.inputs['inputWeight'] = ref }}
@@ -278,8 +356,8 @@ class NamaLengkap extends Component {
                 rightLabel={'CM'}
                 label={'Tinggi Badan'}
                 placeholder={'Tinggi Badan'}
-                value={this.state.height}
-                onChangeText={(height)=>this.setState({height: height})}
+                value={this.state.userData.height}
+                onChangeText={(value)=>this.changeInput(value, 'height')}
                 blurOnSubmit={false}
                 returnKeyType={'done'}
                 onRef={(ref) => { this.inputs['inputHeight'] = ref }}
@@ -288,7 +366,7 @@ class NamaLengkap extends Component {
             </>
           }
           <View marginTop={theme.sizes.base*1.5}>
-            <Button color='primary' onPress={() => navigate('KeturunanSuku')}>
+            <Button color='primary' onPress={() => this.toTribes()}>
               <Text white bold center>Lanjutkan</Text>
             </Button>
           </View>
@@ -298,52 +376,161 @@ class NamaLengkap extends Component {
   }
 }
 
-
-
-
-
-class KeturunanSuku extends Component {
+class KeturunanSuku extends Base {
   constructor(props) {
     super(props);
     this.inputs= {}
     this.state = {
       async_role: '',
-      keturunanSuku: '',
-      keturunanSuku_Opt: mocks.form_KeturunanSuku.keturunanSuku,
-      golonganDarah: '',
-      golonganDarah_Opt: mocks.form_KeturunanSuku.golonganDarah,
-      agama: '',
-      agama_Opt: mocks.form_KeturunanSuku.agama,
-      pendidikan: '',
-      pendidikan_Opt: mocks.form_KeturunanSuku.pendidikan,
-      statusPerkawinan: '',
-      statusPerkawinan_Opt: mocks.form_KeturunanSuku.statusPerkawinan,
-      lokasiTerkini: '',
-      lokasiTerkini_Opt: mocks.form_KeturunanSuku.lokasiTerkini,
-      jumlahAnak: '',
-      jumlahAnak_Opt: mocks.form_KeturunanSuku.jumlahAnak
+      tribes_arr : [],
+      religion_arr : [],
+      marital_status_arr : [],
+      city_arr : [],
+      blood_type_arr : [],
+      education_arr : [],
+      userData : {gender : '', tribes : '', blood_type : '', religion : '', education : '', marital_status : '', have_children : '', could_live_in : '', is_afraid_dog : '', have_work_abroad : '', is_understood_english : '', selected_work_at : '', selected_skill : '', city : '', birth_place : ''},
     };
   }
 
   async componentDidMount(){
     try{
       const async_role = await AsyncStorage.getItem('ASYNC_ROLE')
-      this.setState({async_role: async_role})
-      console.log(this.state.async_role)
+      var userData = await AsyncStorage.getItem('registerData')
+      userData = JSON.parse(userData)
+      await this.setState({async_role: async_role, userData : userData})
+      
+      await this.get_tribes()
+      await this.get_religion()
+      await this.get_marital_status()
+      await this.getCity()
+
+      if(async_role == 'helper'){
+        await this.get_bloodType()
+        await this.get_education()
+      }
+
     }catch(e){
       console.error(e)
     }
   }
 
+  async get_tribes(){
+    this.setState({tribes_arr : []})
+    try{
+        var response = await this.axios.get(this.url + '/tribe/all', {
+            headers:{
+              'Content-Type': 'application/json',
+            }
+        })
+        if(response.data.status == 'success'){
+            var data = response.data.data
+            await this.setState({tribes_arr : data})
+        }
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+  async get_religion(){
+      this.setState({religion_arr : []})
+      try{
+          var response = await this.axios.get(this.url + '/religion/all', {
+              headers:{
+                'Content-Type': 'application/json',
+              }
+          })
+          if(response.data.status == 'success'){
+              var data = response.data.data
+              await this.setState({religion_arr : data})
+          }
+      }
+      catch(e){
+        console.log(e)
+      }
+  }
+  async get_marital_status(){
+      this.setState({marital_status_arr : []})
+      try{
+          var response = await this.axios.get(this.url + '/marital-status/all', {
+              headers:{
+                  'Content-Type': 'application/json'
+              }
+          })
+          if(response.data.status == 'success'){
+              var data = response.data.data
+              await this.setState({marital_status_arr : data})
+          }
+      }
+      catch(e){
+        console.log(e)
+      }
+  }
+
+  async getCity(){
+    try{
+      var response = await this.axios.get(this.url + '/city/all', {
+          headers:{
+              'Content-Type': 'application/json',
+          }
+      })
+      if(response.data.status == 'success'){
+          var data = response.data.data
+          await this.setState({city_arr : data})
+      }
+    }
+    catch(e){
+        console.log(e)
+    }
+  }
+
+  async get_bloodType(){
+    try{
+      var response = await this.axios.get(this.url + '/blood-type/all', {
+          headers:{
+              'Content-Type': 'application/json'
+          }
+      })
+      if(response.data.status == 'success'){
+          var data = response.data.data
+          await this.setState({blood_type_arr : data})
+      }
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+
+  async get_education(){
+    try{
+      var response = await this.axios.get(this.url + '/education/all', {
+          headers:{
+              'Content-Type': 'application/json'
+          }
+      })
+      if(response.data.status == 'success'){
+          var data = response.data.data
+          await this.setState({education_arr : data})
+      }
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+
+  async changeInput(value, type){
+    var userData = this.state.userData
+    userData[type] = value
+    await this.setState({userData : userData})
+  }
+
+  async toNextPage(){
+    var userData = this.state.userData
+    await AsyncStorage.setItem('registerData', JSON.stringify(userData))
+    this.props.navigation.navigate(this.state.async_role == 'helper' ? 'PengalamanKerja' : 'UploadKtp')
+  }
+
   render(){
     const {navigate} = this.props.navigation
-    const keturunanSuku_Opt = this.state.keturunanSuku_Opt
-    const golonganDarah_Opt = this.state.golonganDarah_Opt
-    const agama_Opt = this.state.agama_Opt
-    const pendidikan_Opt = this.state.pendidikan_Opt
-    const statusPerkawinan_Opt = this.state.statusPerkawinan_Opt
-    const lokasiTerkini_Opt = this.state.lokasiTerkini_Opt
-    const jumlahAnak_Opt = this.state.jumlahAnak_Opt
     return(
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={100} style={styles.parent}>
         <View padding={theme.sizes.base}>
@@ -354,75 +541,80 @@ class KeturunanSuku extends Component {
         <View padding={theme.sizes.base}>
           <CustomPicker
             label={'Keturunan Suku'}
-            selectedValue={this.state.keturunanSuku}
+            selectedValue={this.state.userData.tribes}
             style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-            onValueChange={(itemValue) =>
-              this.setState({keturunanSuku: itemValue}) //checkpoint here, statenya
-            }>
-            {keturunanSuku_Opt.map((sukuData) => (
-              <Picker.Item key={sukuData.id} label={sukuData.title} value={sukuData.id}/>
+            onValueChange={(itemValue) =>this.changeInput(itemValue, 'tribes')}>
+            <Picker.Item label={'Pilih Keturunan Suku'} value={''}/>
+            {this.state.tribes_arr.map((data, index) => (
+              <Picker.Item key={index} label={data.name} value={data}/>
             ))}
           </CustomPicker>
           {this.state.async_role == 'helper' &&
             <CustomPicker
               label={'Golongan Darah'}
-              selectedValue={this.state.golonganDarah}
+              selectedValue={this.state.userData.blood_type}
               style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-              onValueChange={(itemValue) =>
-                this.setState({golonganDarah: itemValue}) //checkpoint here, statenya
-              }>
-              {golonganDarah_Opt.map((goldarData) => (
-                <Picker.Item key={goldarData.id} label={goldarData.title} value={goldarData.id}/>
+              onValueChange={(itemValue) => this.changeInput(itemValue, 'blood_type') }>
+              <Picker.Item label={'Pilih Golongan Darah'} value={''}/>
+              {this.state.blood_type_arr.map((data, index) => (
+                <Picker.Item key={index} label={data.name} value={data}/>
               ))}
             </CustomPicker>
           }
           <CustomPicker
             label={'Agama'}
-            selectedValue={this.state.agama}
+            selectedValue={this.state.userData.religion}
             style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-            onValueChange={(itemValue) =>
-              this.setState({agama: itemValue}) //checkpoint here, statenya
-            }>
-            {agama_Opt.map((agamaData) => (
-              <Picker.Item key={agamaData.id} label={agamaData.title} value={agamaData.id}/>
+            onValueChange={(itemValue) =>this.changeInput(itemValue, 'religion')}>
+            <Picker.Item label={'Pilih Agama'} value={''}/>
+            {this.state.religion_arr.map((data, index) => (
+              <Picker.Item key={index} label={data.name} value={data}/>
             ))}
           </CustomPicker>
           {this.state.async_role == 'helper' &&
             <CustomPicker
               label={'Pendidikan'}
-              selectedValue={this.state.pendidikan}
+              selectedValue={this.state.userData.education}
               style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-              onValueChange={(itemValue) =>
-                this.setState({pendidikan: itemValue}) //checkpoint here, statenya
-              }>
-              {pendidikan_Opt.map((pendidikanData) => (
-                <Picker.Item key={pendidikanData.id} label={pendidikanData.title} value={pendidikanData.id}/>
+              onValueChange={(itemValue) => this.changeInput(itemValue, 'education') }>
+              <Picker.Item label={'Pilih Pendidikan'} value={''}/>
+              {this.state.education_arr.map((data, index) => (
+                <Picker.Item key={index} label={data.name} value={data}/>
               ))}
             </CustomPicker>
           }
           <CustomPicker
             label={'Status Perkawinan'}
-            selectedValue={this.state.statusPerkawinan}
+            selectedValue={this.state.userData.marital_status}
             style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-            onValueChange={(itemValue) =>
-              this.setState({statusPerkawinan: itemValue}) //checkpoint here, statenya
-            }>
-            {statusPerkawinan_Opt.map((statusPerkawinanData) => (
-              <Picker.Item key={statusPerkawinanData.id} label={statusPerkawinanData.title} value={statusPerkawinanData.id}/>
+            onValueChange={(itemValue) =>this.changeInput(itemValue, 'marital_status')}>
+            <Picker.Item label={'Pilih Status Perkawinan'} value={''}/>
+            {this.state.marital_status_arr.map((data, index) => (
+              <Picker.Item key={index} label={data.name} value={data}/>
             ))}
           </CustomPicker>
           <CustomPicker
             label={'Lokasi Terkini'}
-            selectedValue={this.state.lokasiTerkini}
+            selectedValue={this.state.userData.city}
             style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-            onValueChange={(itemValue) =>
-              this.setState({lokasiTerkini: itemValue}) //checkpoint here, statenya
-            }>
-            {lokasiTerkini_Opt.map((lokasiTerkiniData) => (
-              <Picker.Item key={lokasiTerkiniData.id} label={lokasiTerkiniData.title} value={lokasiTerkiniData.id}/>
+            onValueChange={(itemValue) => this.changeInput(itemValue, 'city')}>
+            <Picker.Item label={'Pilih Lokasi Saat ini'} value={''}/>
+            {this.state.city_arr.map((data, index) => (
+              <Picker.Item key={index} label={data.name} value={data}/>
             ))}
           </CustomPicker>
+
           <CustomPicker
+            label={'Punya Anak'}
+            selectedValue={this.state.userData.have_children}
+            style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
+            onValueChange={(itemValue) => this.changeInput(itemValue, 'have_children')}>
+              <Picker.Item label={'Punya Anak?'} value='' />
+              <Picker.Item label="Ya" value="1" />
+              <Picker.Item label="Tidak" value="0" />
+          </CustomPicker>
+
+          {/* <CustomPicker
             label={'Jumlah Anak'}
             selectedValue={this.state.jumlahAnak}
             style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
@@ -432,9 +624,9 @@ class KeturunanSuku extends Component {
             {jumlahAnak_Opt.map((jumlahAnakData) => (
               <Picker.Item key={jumlahAnakData.id} label={jumlahAnakData.title} value={jumlahAnakData.id}/>
             ))}
-          </CustomPicker>
+          </CustomPicker> */}
           <View marginTop={theme.sizes.base*1.5}>
-            <Button color='primary' onPress={() => navigate(this.state.async_role == 'helper' ? 'PengalamanKerja' : 'UploadKtp')}>
+            <Button color='primary' onPress={() => this.toNextPage()}>
               <Text white bold center>Lanjutkan</Text>
             </Button>
           </View>
@@ -444,11 +636,7 @@ class KeturunanSuku extends Component {
   }
 }
 
-
-
-
-
-class PengalamanKerja extends Component {
+class PengalamanKerja extends Base {
   constructor(props) {
     super(props)
     this.inputs = {}
@@ -465,16 +653,32 @@ class PengalamanKerja extends Component {
       luarNegeri_Opt: mocks.form_PengalamanKerja.luarNegeri,
       bahasaInggris: '',
       bahasaInggris_Opt: mocks.form_PengalamanKerja.bahasaInggris,
+
+      userData : {gender : '', tribes : '', blood_type : '', religion : '', education : '', marital_status : '', have_children : '', could_live_in : '', is_afraid_dog : '', have_work_abroad : '', is_understood_english : '', selected_work_at : '', selected_skill : '', city : '', birth_place : ''},
     };
   }
 
   async componentDidMount(){
     try {
       const role = await AsyncStorage.getItem('ASYNC_ROLE')
-      this.setState({async_role: role})
+      var userData = await AsyncStorage.getItem('registerData')
+      userData = JSON.parse(userData)
+      await this.setState({async_role: role, userData : userData})
     } catch (e) {
       console.error(e)
     }
+  }
+
+  async changeInput(value, type){
+    var userData = this.state.userData
+    userData[type] = value
+    await this.setState({userData : userData})
+  }
+
+  async toNextPage(){
+    var userData = this.state.userData
+    await AsyncStorage.setItem('registerData', JSON.stringify(userData))
+    this.props.navigation.navigate('Penempatan')
   }
 
   render(){
@@ -490,6 +694,7 @@ class PengalamanKerja extends Component {
           <Text primary bold center>Bagian 3 dari 7</Text>
         </View>
         <View padding={theme.sizes.base}>
+
           <CustomPicker
             label={'Kategori Pekerjaan'}
             selectedValue={this.state.kategori}
@@ -501,62 +706,55 @@ class PengalamanKerja extends Component {
               <Picker.Item key={kategoriData.id} label={kategoriData.title} value={kategoriData.id}/>
             ))}
           </CustomPicker>
+
           <CustomInput
             number
             label={'Gaji per Bulan (Rp)'}
             placeholder={'Gaji per Bulan (Rp)'}
-            value={this.state.gaji}
-            onChangeText={(gaji)=>this.setState({gaji: gaji})}
+            value={this.state.userData.requested_price}
+            onChangeText={(value)=>this.changeInput(value, 'requested_price')}
             blurOnSubmit={false}
             returnKeyType={'next'}
-            onSubmitEditing={(gaji)=>this.setState({gaji: gaji})}
+            onSubmitEditing={(value)=>this.changeInput(value, 'requested_price')}
           />
           <CustomPicker
             label={'Menginap (Live In)'}
-            selectedValue={this.state.menginap}
+            selectedValue={this.state.userData.could_live_in}
             style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-            onValueChange={(itemValue) =>
-              this.setState({menginap: itemValue}) //checkpoint here, statenya
-            }>
-            {menginap_Opt.map((menginapData) => (
-              <Picker.Item key={menginapData.id} label={menginapData.title} value={menginapData.id}/>
-            ))}
+            onValueChange={(itemValue) => this.changeInput(itemValue, 'could_live_in') }>
+              <Picker.Item label={'Apakah Menginap?'} value='' />
+              <Picker.Item label="Ya" value="1" />
+              <Picker.Item label="Tidak" value="0" />
           </CustomPicker>
           <CustomPicker
             label={'Ketakutan Terhadap Anjing'}
-            selectedValue={this.state.takutAnjing}
+            selectedValue={this.state.userData.is_afraid_dog}
             style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-            onValueChange={(itemValue) =>
-              this.setState({takutAnjing: itemValue}) //checkpoint here, statenya
-            }>
-            {takutAnjing_Opt.map((takutAnjingData) => (
-              <Picker.Item key={takutAnjingData.id} label={takutAnjingData.title} value={takutAnjingData.id}/>
-            ))}
+            onValueChange={(itemValue) => this.changeInput(itemValue, 'is_afraid_dog')}>
+            <Picker.Item label={'Apakah Takut Anjing?'} value='' />
+            <Picker.Item label="Ya" value="1" />
+            <Picker.Item label="Tidak" value="0" />
           </CustomPicker>
           <CustomPicker
             label={'Pengalaman Kerja di Luar Negeri'}
-            selectedValue={this.state.luarNegeri}
+            selectedValue={this.state.userData.have_work_abroad}
             style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-            onValueChange={(itemValue) =>
-              this.setState({luarNegeri: itemValue}) //checkpoint here, statenya
-            }>
-            {luarNegeri_Opt.map((luarNegeriData) => (
-              <Picker.Item key={luarNegeriData.id} label={luarNegeriData.title} value={luarNegeriData.id}/>
-            ))}
+            onValueChange={(itemValue) => this.changeInput(itemValue, 'have_work_abroad') }>
+            <Picker.Item label={'Apakah Pernah Kerja di LN?'} value='' />
+            <Picker.Item label="Ya" value="1" />
+            <Picker.Item label="Tidak" value="0" />
           </CustomPicker>
           <CustomPicker
             label={'Kemampuan Berbahasa Inggris'}
-            selectedValue={this.state.bahasaInggris}
+            selectedValue={this.state.userData.is_understood_english}
             style={{borderBottomColor: theme.colors.primary, borderBottomWidth: 2}}
-            onValueChange={(itemValue) =>
-              this.setState({bahasaInggris: itemValue}) //checkpoint here, statenya
-            }>
-            {bahasaInggris_Opt.map((bahasaInggrisData) => (
-              <Picker.Item key={bahasaInggrisData.id} label={bahasaInggrisData.title} value={bahasaInggrisData.id}/>
-            ))}
+            onValueChange={(itemValue) => this.changeInput(itemValue, 'is_understood_english') }>
+            <Picker.Item label={'Apakah Mengerti B.Inggris?'} value='' />
+            <Picker.Item label="Ya" value="1" />
+            <Picker.Item label="Tidak" value="0" />
           </CustomPicker>
           <View marginTop={theme.sizes.base*1.5}>
-            <Button color='primary' onPress={() => navigate('Penempatan')}>
+            <Button color='primary' onPress={() => this.toNextPage()}>
               <Text white bold center>Lanjutkan</Text>
             </Button>
           </View>
@@ -566,33 +764,97 @@ class PengalamanKerja extends Component {
   }
 }
 
-
-
-
-
-class Penempatan extends Component {
+class Penempatan extends Base {
   constructor(props) {
     super(props);
     this.inputs = {}
     this.state = {
       search: '',
-      kota: mocks.form_Penempatan.kota
+      kota: mocks.form_Penempatan.kota,
+
+      async_role : '',
+      city_arr : [],
+      temp_city : [],
+      userData : {gender : '', tribes : '', blood_type : '', religion : '', education : '', marital_status : '', have_children : '', could_live_in : '', is_afraid_dog : '', have_work_abroad : '', is_understood_english : '', selected_work_at : '', selected_skill : '', city : '', birth_place : ''},
     };
   }
 
   async componentDidMount(){
-    console.log(this.state.lokasi)
-    // try {
-      
-    // } catch (e) {
-    //   console.error(e)
-    // }
+    const role = await AsyncStorage.getItem('ASYNC_ROLE')
+    var userData = await AsyncStorage.getItem('registerData')
+    userData = JSON.parse(userData)
+    await this.setState({async_role: role, userData : userData})
+
+    await this.getCity()
+  }
+
+  async getCity(){
+    try{
+      await this.setState({city_arr : []})
+
+      var response = await this.axios.get(this.url + '/city/all?name='+this.state.search, {
+          headers:{
+              'Content-Type': 'application/json'
+          }
+      })
+
+      if(response.data.status == 'success'){
+          var data = response.data.data
+          var temp_city = this.state.temp_city
+          for(var x in data){
+              data[x].checked = false
+
+              if(temp_city.length > 0){
+                  for(var y in temp_city){
+                      if(data[x].id == temp_city[y].id){
+                          data[x].checked = true
+                      }
+                  }
+              }
+
+          }
+          await this.setState({city_arr : data})
+      }
+    }
+    catch(e){
+        console.log(e)
+    }
   }
 
   kotaCheck=(id)=>{
     const kota = this.state.kota
     kota[id].checked = !kota[id].checked
     this.setState({kota: kota})
+  }
+
+  async citySelected(index){
+    var city = this.state.city_arr
+    city[index].checked = !city[index].checked
+    await this.setState({city_arr : city})
+
+    var data = this.state.city_arr
+    
+    var arr_data = []
+
+    for(var x in data){
+        if(data[x].checked){
+            arr_data.push(data[x])
+        }
+    }
+
+    await this.setState({temp_city : arr_data})
+  }
+
+  async searchCity(value){
+    await this.setState({search : value})
+    await this.getCity()
+  }
+
+  async toNextPage(){
+    var userData = this.state.userData
+    userData.selected_work_at = this.state.temp_city
+    await AsyncStorage.setItem('registerData', JSON.stringify(userData))
+    this.props.navigation.navigate('Keterampilan')
   }
 
   render(){
@@ -606,21 +868,22 @@ class Penempatan extends Component {
           <CustomInput
             label={'Cari Kota'}
             placeholder={'Masukkan Nama Kota'}
+            onChangeText={(value)=>this.searchCity(value)}
           />
         </View>
         <View flex={1} padding={[0, theme.sizes.base]}>
           <Text>Bersedia ditempatkan di :</Text>
           <View marginTop={theme.sizes.base}>
             <FlatList
-              data={this.state.kota}
-              renderItem={({item}) =>
+              data={this.state.city_arr}
+              renderItem={({item, index}) =>
                 <CheckBox
                   style={{paddingVertical: theme.sizes.base*.25}}
-                  onClick={() => this.kotaCheck(item.id)} 
+                  onClick={() => this.citySelected(index)} 
                   isChecked={item.checked} 
                   checkBoxColor={theme.colors.primary}
                   uncheckedCheckBoxColor={theme.colors.black_t30}
-                  rightText={<Text >{item.title}</Text>}
+                  rightText={<Text >{item.name}</Text>}
                 />
               }
               keyExtractor={item => item.id}
@@ -628,7 +891,7 @@ class Penempatan extends Component {
           </View>
         </View>
         <View padding={theme.sizes.base}>
-          <Button color='primary' onPress={() => navigate('Keterampilan')}>
+          <Button color='primary' onPress={() => this.toNextPage()}>
             <Text white bold center>Lanjutkan</Text>
           </Button>
         </View>
@@ -637,16 +900,72 @@ class Penempatan extends Component {
   }
 }
 
-
-
-
-
-class Keterampilan extends Component {
+class Keterampilan extends Base {
   constructor(props) {
     super(props);
     this.state = {
-      skill: mocks.form_Keterampilan.skill
+      skill: mocks.form_Keterampilan.skill,
+
+      async_role : '',
+      userData : {gender : '', tribes : '', blood_type : '', religion : '', education : '', marital_status : '', have_children : '', could_live_in : '', is_afraid_dog : '', have_work_abroad : '', is_understood_english : '', selected_work_at : '', selected_skill : '', city : '', birth_place : ''},
+      skill_arr : [],
+      temp_skill : [],
     };
+  }
+
+  async componentDidMount(){
+    const role = await AsyncStorage.getItem('ASYNC_ROLE')
+    var userData = await AsyncStorage.getItem('registerData')
+    userData = JSON.parse(userData)
+    await this.setState({async_role: role, userData : userData})
+
+    await this.get_data()
+  }
+
+  async get_data(){
+    try{
+      var response = await this.axios.get(this.url + '/skill/all', {
+          headers:{
+              'Content-Type': 'application/json'
+          }
+      })
+
+      if(response.data.status == 'success'){
+          var data = response.data.data
+          for(var x in data){
+              data[x].checked = false
+          }
+          await this.setState({skill_arr : data})
+      }
+    }
+    catch(e){
+        console.log(e)
+    }
+  }
+
+  async skillSelected(index){
+    var skill = this.state.skill_arr
+    skill[index].checked = !skill[index].checked
+    await this.setState({skill_arr : skill})
+
+    var data = this.state.skill_arr
+    
+    var arr_data = []
+
+    for(var x in data){
+        if(data[x].checked){
+            arr_data.push(data[x])
+        }
+    }
+
+    await this.setState({temp_skill : arr_data})
+  }
+
+  async toNextPage(){
+    var userData = this.state.userData
+    userData.selected_skill = this.state.temp_skill
+    await AsyncStorage.setItem('registerData', JSON.stringify(userData))
+    this.props.navigation.navigate('UploadKtp')
   }
 
   skillCheck=(id)=>{
@@ -666,15 +985,15 @@ class Keterampilan extends Component {
           <Text>Keterampilan :</Text>
           <View marginTop={theme.sizes.base}>
             <FlatList
-              data={this.state.skill}
-              renderItem={({item}) =>
+              data={this.state.skill_arr}
+              renderItem={({item, index}) =>
                 <CheckBox
                   style={{paddingVertical: theme.sizes.base*.25}}
-                  onClick={() => this.skillCheck(item.id)} 
+                  onClick={() => this.skillSelected(index)} 
                   isChecked={item.checked} 
                   checkBoxColor={theme.colors.primary}
                   uncheckedCheckBoxColor={theme.colors.black_t30}
-                  rightText={<Text >{item.title}</Text>}
+                  rightText={<Text >{item.name}</Text>}
                 />
               }
               keyExtractor={item => item.id}
@@ -682,7 +1001,7 @@ class Keterampilan extends Component {
           </View>
         </View>
         <View padding={theme.sizes.base}>
-          <Button color='primary' onPress={() => navigate('UploadKtp')}>
+          <Button color='primary' onPress={() => this.toNextPage()}>
             <Text white bold center>Lanjutkan</Text>
           </Button>
         </View>
@@ -691,27 +1010,51 @@ class Keterampilan extends Component {
   }
 }
 
-
-
-
-
-class UploadKtp extends Component {
+class UploadKtp extends Base {
   constructor(props) {
     super(props);
     this.state = {
       async_role: '',
       ktpPlaceholder: 
-      'https://lh3.googleusercontent.com/proxy/DJvQQ62TCjGmHE3iH2Gf74ANDDUIPIwvwEsVLjyVHsn6Xr72EVaHC68-acHzg1vWNvOBj9qB11McbSW1290'
+      'https://lh3.googleusercontent.com/proxy/DJvQQ62TCjGmHE3iH2Gf74ANDDUIPIwvwEsVLjyVHsn6Xr72EVaHC68-acHzg1vWNvOBj9qB11McbSW1290',
+      ktpData : '',
+      userData : {gender : '', tribes : '', blood_type : '', religion : '', education : '', marital_status : '', have_children : '', could_live_in : '', is_afraid_dog : '', have_work_abroad : '', is_understood_english : '', selected_work_at : '', selected_skill : '', city : '', birth_place : ''},
     };
   }
 
   async componentDidMount(){
     try{
       const role = await AsyncStorage.getItem('ASYNC_ROLE')
-      this.setState({async_role: role})
+      var userData = await AsyncStorage.getItem('registerData')
+      userData = JSON.parse(userData)
+      await this.setState({async_role: role, userData : userData})
     }catch(e){
       console.error(e)
     }
+  }
+
+  async choosePhoto(){
+    ImagePicker.showImagePicker(async(response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                // arr.picture = response.data
+                // arr.image_display = {uri : response.uri}
+
+                await this.setState({ktpPlaceholder : response.uri, ktpData : response.data})
+            }
+        });
+  }
+
+  async toNextPage(){
+    var userData = this.state.userData
+    userData.id_card = this.state.ktpData
+    await AsyncStorage.setItem('registerData', JSON.stringify(userData))
+    this.props.navigation.navigate('UploadFotoProfil')
   }
 
   render(){
@@ -734,12 +1077,12 @@ class UploadKtp extends Component {
             }}
             source={{uri: this.state.ktpPlaceholder}}
           />
-          <Button border={theme.colors.primary}>
+          <Button border={theme.colors.primary} onPress={()=>this.choosePhoto()}>
             <Text primary bold center>Upload Photo</Text>
           </Button>
         </View>
         <View padding={theme.sizes.base}>
-          <Button color='primary' onPress={() => navigate('UploadFotoProfil')}>
+          <Button color='primary' onPress={() => this.toNextPage()}>
             <Text white bold center>Lanjutkan</Text>
           </Button>
         </View>
@@ -748,30 +1091,34 @@ class UploadKtp extends Component {
   }
 }
 
-
-
-
-
-class UploadFotoProfil extends Component {
+class UploadFotoProfil extends Base {
   constructor(props) {
     super(props);
     this.state = {
       async_role: '',
-      imgPlaceholder: 'https://source.unsplash.com/featured/?person',
-      helperPlaceholder: mocks.form_UploadFotoProfil.helperPlaceholder
+      // imgPlaceholder: 'https://source.unsplash.com/featured/?person',
+      imgPlaceholder : this.no_user_img,
+      imageData : '',
+      helperPlaceholder: mocks.form_UploadFotoProfil.helperPlaceholder,
+      userData : {gender : '', tribes : '', blood_type : '', religion : '', education : '', marital_status : '', have_children : '', could_live_in : '', is_afraid_dog : '', have_work_abroad : '', is_understood_english : '', selected_work_at : '', selected_skill : '', city : '', birth_place : ''},
+      userType : {},
+      photo_arr : [{image_display : this.no_user_img}],
     };
   }
 
   async componentDidMount(){
     try{
       const role = await AsyncStorage.getItem('ASYNC_ROLE')
-      this.setState({async_role: role})
+      var userData = await AsyncStorage.getItem('registerData')
+      userData = JSON.parse(userData)
+      await this.setState({async_role: role, userData : userData})
+      await this.get_type()
     }catch(e){
       console.error(e)
     }
   }
 
-  simpanVerified(){
+  async simpanVerified(){
     Alert.alert(
       'Disimpan',
       'Terima kasih telah mengisi data, anda bisa melanjutkan ke halaman utama',
@@ -780,6 +1127,110 @@ class UploadFotoProfil extends Component {
       ],
       {cancelable: false},
     )
+  }
+
+  async get_type(){
+    try{
+      var response = await this.axios.get(this.url + '/type?name='+this.state.async_role, {
+          headers:{
+              'Content-Type': 'application/json'
+          }
+      })
+      if(response.data.status == 'success'){
+          var data = response.data.data.data[0]
+          await this.setState({userType : data})
+      }
+    }
+    catch(e){
+        console.log(e)
+    }
+  }
+
+  async choosePhoto(){
+    ImagePicker.showImagePicker(async(response) => {
+      if (response.didCancel) {
+          console.log('User cancelled image picker');
+      } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+          console.log('User tapped custom button: ', response.customButton);
+      } else {
+          // await this.setState({imgPlaceholder : {uri : response.uri}, imageData : response.data})
+
+          if(this.state.async_role == 'majikan'){
+            await this.setState({photo_arr : [{image_display : {uri : response.uri}, picture : response.data, is_primary : 1}]})
+          }
+          else{
+            var arr_photo = this.state.photo_arr
+            var arr = {}
+            arr.picture = response.data
+            arr.image_display = {uri : response.uri}
+            arr.is_primary = 1
+            if(arr_photo.length > 0){
+                arr.is_primary = 0
+            }
+            arr_photo.push(arr)
+  
+            await this.setState({photo_arr : arr_photo})
+          }
+      }
+    });
+  }
+
+  async saveData(){
+    console.log(this.state.photo_arr[0])
+    try{
+      var arr_picture = this.state.photo_arr
+
+      var userData = this.state.userData
+      var data = {}
+
+      data.name = userData.name
+      data.email = userData.email
+      data.phone = userData.phone
+      data.gender = userData.gender
+      data.tribes = userData.tribes
+      data.religion = userData.religion
+      data.marital_status = userData.marital_status
+      data.have_children = userData.have_children
+      data.city = userData.city
+      data.birth_date = userData.birth_date
+      data.birth_place = userData.birth_place
+      data.id_card = userData.id_card
+
+      if(this.state.async_role == 'helper'){
+        data = userData
+      }
+
+      data.arr_picture = arr_picture
+      data.type = this.state.userType
+
+      console.log(data)
+      
+      var response = await this.axios.post(this.url + '/auth/register', data, {
+          headers:{
+              'Content-Type': 'application/json'
+          }
+      })
+      if(response.data.status == 'success'){
+
+        await AsyncStorage.setItem('token', response.data.token)
+        await AsyncStorage.setItem('user_type', data.type.name)
+        await this.simpanVerified()
+      }
+    }
+    catch(e){
+        console.log(e)
+    }
+  }
+
+  async setPrimary(index){
+    var photo = this.state.photo_arr
+    for(var x in photo){
+        photo[x].is_primary = 0
+    }
+    photo[index].is_primary = 1
+    this.setState({photo_arr : photo})
   }
 
   render(){
@@ -805,19 +1256,19 @@ class UploadFotoProfil extends Component {
                       borderRadius: theme.sizes.base*.5,
                       marginTop: theme.sizes.base*1.5
                     }}
-                    source={{uri: this.state.imgPlaceholder}}
+                    source={this.state.photo_arr[0].image_display}
                   />
                 </View>
                 <View marginTop={theme.sizes.base*1.5}>
-                  <Button border={theme.colors.primary}>
+                  <Button border={theme.colors.primary} onPress={()=>this.choosePhoto()}>
                     <Text primary bold center>Upload Photo</Text>
                   </Button>
                 </View>
               </>
             :
               <FlatList
-                data={this.state.helperPlaceholder}
-                renderItem={({item}) => 
+                data={this.state.photo_arr}
+                renderItem={({item, index}) => 
                   <View flex={1/3}>
                     <View padding={theme.sizes.base*.25}>
                       <Image
@@ -826,11 +1277,14 @@ class UploadFotoProfil extends Component {
                           backgroundColor: theme.colors.black_t90,
                           borderRadius: theme.sizes.base*.5,
                         }}
-                        source={{uri: item.uri}}
+                        source={item.image_display}
                       />
-                      <Button smallHeight border={theme.colors.primary} style={{marginTop: theme.sizes.base*.5}}>
-                        <Text primary bold center>Pilih</Text>
-                      </Button>
+                      {
+                        item.is_primary ? <Text primary bold center>Foto Utama</Text> : 
+                        <Button smallHeight border={theme.colors.primary} style={{marginTop: theme.sizes.base*.5}} onPress={()=>this.setPrimary(index)}>
+                          <Text primary bold center>Pilih Sbg Utama</Text>
+                        </Button>
+                      }
                       <View position={'absolute'} style={{right: theme.sizes.base*.25, top: theme.sizes.base*.5}}>
                         <Icon.Button name={'times'} backgroundColor={'transparent'} padding={0} color={theme.colors.white} onPress={() => null}/>
                         {/* <TouchableHighlight activeOpacity={0.5} underlayColor={theme.colors.primary_light} onPress={() => null}>
@@ -843,7 +1297,7 @@ class UploadFotoProfil extends Component {
                 numColumns={3}
                 ListHeaderComponent={() => 
                   <View color='white' paddingBottom={theme.sizes.base}>
-                    <Button border={theme.colors.primary}>
+                    <Button border={theme.colors.primary} onPress={()=>this.choosePhoto()}>
                       <Text primary bold center>Upload Photo</Text>
                     </Button>
                   </View>
@@ -856,7 +1310,7 @@ class UploadFotoProfil extends Component {
         </View>
         
         <View padding={theme.sizes.base}>
-          <Button color='primary' onPress={() => this.simpanVerified()}>
+          <Button color='primary' onPress={() => this.saveData()}>
             <Text white bold center>Simpan</Text>
           </Button>
         </View>
@@ -865,14 +1319,10 @@ class UploadFotoProfil extends Component {
   }
 }
 
-
-
-
-
 export {
   Kategori,
-  NamaLengkap,
   KeturunanSuku,
+  NamaLengkap,
   PengalamanKerja,
   Penempatan,
   Keterampilan,
