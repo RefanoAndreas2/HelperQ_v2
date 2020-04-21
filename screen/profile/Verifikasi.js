@@ -22,6 +22,7 @@ import {
 import { theme, mocks } from "../../constants";
 import Icon from "react-native-vector-icons/MaterialIcons";
 // import { RadioButtons } from 'react-native-radio-buttons'
+import { StackActions, NavigationActions } from "react-navigation";
 import _ from "lodash";
 
 const majikan = [
@@ -42,7 +43,13 @@ class RadioButtons extends Component {
       <View>
         {options.map((item) => {
           return (
-            <View color={'white'} shadow ovHidden margin={[theme.sizes.base/2, theme.sizes.base]} radius={theme.sizes.base/2}>
+            <View
+              color={"white"}
+              shadow
+              ovHidden
+              margin={[theme.sizes.base / 2, theme.sizes.base]}
+              radius={theme.sizes.base / 2}
+            >
               <Touch onPress={() => this.setState({ value: item.key })}>
                 <View
                   row
@@ -64,7 +71,9 @@ class RadioButtons extends Component {
                   />
                   <View marginLeft={theme.sizes.base * 0.5}>
                     <Text bold>{item.title}</Text>
-                    <Text lilbit style={{marginTop: theme.sizes.base/2}}>{item.addr}</Text>
+                    <Text lilbit style={{ marginTop: theme.sizes.base / 2 }}>
+                      {item.addr}
+                    </Text>
                   </View>
                 </View>
               </Touch>
@@ -76,7 +85,7 @@ class RadioButtons extends Component {
   }
 }
 
-export default class Verifikasi extends Component {
+class Verifikasi extends Component {
   constructor(props) {
     super(props);
     this.inputs = {};
@@ -85,6 +94,19 @@ export default class Verifikasi extends Component {
       modal: false,
     };
   }
+
+  static navigationOptions = ({ navigation }) => ({
+    title: "Lokasi Verifikasi",
+    headerStyle: {
+      backgroundColor: "white",
+      color: theme.colors.primary,
+    },
+    headerTitleStyle: {
+      color: theme.colors.primary,
+      fontWeight: "bold",
+    },
+    headerTintColor: theme.colors.primary,
+  });
 
   setSelectedOption(selectedOption) {
     console.log(selectedOption);
@@ -111,7 +133,7 @@ export default class Verifikasi extends Component {
             center
             color={"white"}
             radius={theme.sizes.base / 2}
-            marginTop={theme.sizes.base/2}
+            marginTop={theme.sizes.base / 2}
             padding={[theme.sizes.base * 0.75, theme.sizes.base]}
             shadow
           >
@@ -121,24 +143,30 @@ export default class Verifikasi extends Component {
               color={theme.colors.black_t90}
             />
             <TextInput
-              placeholder={'Pencarian Lokasi'}
+              placeholder={"Pencarian Lokasi"}
               style={{
                 fontSize: theme.sizes.base,
-                marginLeft: theme.sizes.base
+                marginLeft: theme.sizes.base,
               }}
             />
           </View>
           <View marginTop={theme.sizes.base}>
-            <Text >
-              Pilih Cabang Mitra Rewang untuk melakukan Pemeriksaan &
-              Verifikasi Akun anda.
+            <Text>
+              Pilih Cabang Mitra Rewang untuk melakukan Pemeriksaan & Verifikasi
+              Akun anda.
             </Text>
           </View>
         </View>
-        <ScrollView contentContainerStyle={{paddingBottom: theme.sizes.base/2}}>
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: theme.sizes.base / 2 }}
+        >
           <RadioButtons options={options} />
         </ScrollView>
-        <View color={'white'} padding={theme.sizes.base} style={{elevation: 6}}>
+        <View
+          color={"white"}
+          padding={theme.sizes.base}
+          style={{ elevation: 6 }}
+        >
           <Button
             color={"secondary"}
             onPress={() => this.setState({ modal: !this.state.modal })}
@@ -148,6 +176,7 @@ export default class Verifikasi extends Component {
             </Text>
           </Button>
         </View>
+
         <Modal
           transparent={true}
           visible={this.state.modal}
@@ -202,5 +231,245 @@ export default class Verifikasi extends Component {
     );
   }
 }
+
+class VerifikasiConfirm extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+  }
+
+  static navigationOptions = ({ navigation }) => ({
+    title: "Konfirmasi Proses Verifikasi",
+    headerStyle: {
+      backgroundColor: "white",
+      color: theme.colors.primary,
+    },
+    headerTitleStyle: {
+      color: theme.colors.primary,
+      fontWeight: "bold",
+    },
+    headerTintColor: theme.colors.primary,
+  });
+
+  render() {
+    const { dispatch } = this.props.navigation;
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({
+          routeName: "indexBottomTab",
+          action: NavigationActions.navigate({ routeName: "Profile" }),
+          // params: { navigateFrom: "PaymentGateway" },
+        }),
+      ],
+    });
+    return (
+      <View style={styles.parent}>
+        <View center middle flex={1}>
+          <Icon
+            name={"contacts"}
+            size={theme.sizes.base * 6}
+            color={theme.colors.black_t60}
+          />
+          <View padding={theme.sizes.base}>
+            <Text center upbit bold>
+              Terima Kasih,
+            </Text>
+            <Text center style={{ marginTop: theme.sizes.base }}>
+              Harap mengunjungi Mitra Rewang Kami{"\n"}
+              Sesuai infromasi di bawah ini{"\n"}
+              untuk melakukan konfirmasi
+            </Text>
+          </View>
+
+          <View
+            color={"white"}
+            width={Dimensions.get("window").width - theme.sizes.base * 2}
+            padding={theme.sizes.base}
+            radius={theme.sizes.base / 2}
+            shadow
+          >
+            <Text center bold>
+              Mitra Rewang [Kota]
+            </Text>
+            <Text lilbit center style={{ marginTop: theme.sizes.base }}>
+              Jl. [Nama Jalan]{"\n"}
+              [tambahan]{"\n"}
+              [No. Telp]
+            </Text>
+          </View>
+        </View>
+        <View
+          color={"white"}
+          padding={theme.sizes.base}
+          style={{ elevation: 6 }}
+        >
+          <Button color={"secondary"} onPress={() => dispatch(resetAction)}>
+            <Text center white>
+              Kembali Ke Home
+            </Text>
+          </Button>
+        </View>
+      </View>
+    );
+  }
+}
+
+class VerifikasiDetail extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+  }
+
+  static navigationOptions = ({ navigation }) => ({
+    title: "Detail Verifikasi",
+    headerStyle: {
+      backgroundColor: "white",
+      color: theme.colors.primary,
+    },
+    headerTitleStyle: {
+      color: theme.colors.primary,
+      fontWeight: "bold",
+    },
+    headerTintColor: theme.colors.primary,
+  });
+
+  render() {
+    return (
+      <ScrollView style={[styles.parent]}>
+        <View
+          color={"white"}
+          shadow
+          radius={theme.sizes.base / 2}
+          margin={[theme.sizes.base, theme.sizes.base, 0]}
+        >
+          <View center row space={"between"} padding={theme.sizes.base}>
+            <Text black_t30>Status</Text>
+            <Text secondary bold right>
+              [Status]
+            </Text>
+          </View>
+        </View>
+
+        <View
+          color={"white"}
+          shadow
+          radius={theme.sizes.base / 2}
+          margin={[theme.sizes.base, theme.sizes.base, 0]}
+        >
+          <View center row space={"between"} padding={theme.sizes.base}>
+            <Text black_t30>Tanggal Order</Text>
+            <Text right>[Tanggal Order]</Text>
+          </View>
+        </View>
+
+        <View color={"white"} shadow marginTop={theme.sizes.base}>
+          <View row center padding={theme.sizes.base}>
+            <Icon
+              name={"lock"}
+              size={theme.sizes.base * 1.5}
+              color={theme.colors.primary}
+            />
+            <Text style={{ marginLeft: theme.sizes.base / 2 }}>
+              Info Mitra Rewang yang dipilih
+            </Text>
+          </View>
+          <View height={1} color={theme.colors.black_t90} />
+          <View padding={theme.sizes.base}>
+            <Text bold>Mitra Rewang [Kota]</Text>
+            <Text lilbit style={{ marginTop: theme.sizes.base / 2 }}>
+              [Alamat] {"\n"}
+              [Alamat] {"\n"}
+              [Alamat] {"\n"}
+            </Text>
+
+            <TouchableWithoutFeedback onPress={() => console.log("Change")}>
+              <Text lilbit bold secondary underline>
+                Change
+              </Text>
+            </TouchableWithoutFeedback>
+          </View>
+        </View>
+
+        <View color={"white"} shadow marginTop={theme.sizes.base}>
+          <View row center padding={theme.sizes.base}>
+            <Icon
+              name={"lock"}
+              size={theme.sizes.base * 1.5}
+              color={theme.colors.primary}
+            />
+            <Text style={{ marginLeft: theme.sizes.base / 2 }}>
+              Info Personal Test
+            </Text>
+          </View>
+          <View height={1} color={theme.colors.black_t90} />
+          <View padding={theme.sizes.base}>
+            <FlatList
+              data={["Tanggal Tes", "Nilai Tes"]}
+              renderItem={({ item }) => (
+                <View row space={"between"}>
+                  <Text lilbit black_t30>
+                    {item}
+                  </Text>
+                  <Text lilbit bold>
+                    [{item}]
+                  </Text>
+                </View>
+              )}
+              ItemSeparatorComponent={() => (
+                <View height={theme.sizes.lilbit} />
+              )}
+            />
+          </View>
+        </View>
+
+        <View color={"white"} shadow margin={[theme.sizes.base, 0]}>
+          <View row center padding={theme.sizes.base}>
+            <Icon
+              name={"lock"}
+              size={theme.sizes.base * 1.5}
+              color={theme.colors.primary}
+            />
+            <Text style={{ marginLeft: theme.sizes.base / 2 }}>
+              Info Personal Test
+            </Text>
+          </View>
+          <View height={1} color={theme.colors.black_t90} />
+          <View padding={theme.sizes.base}>
+            <FlatList
+              data={["Status", "Biaya Verifikasi", "Biaya Administrasi"]}
+              renderItem={({ item }) => (
+                <View row space={"between"}>
+                  <Text lilbit black_t30>
+                    {item}
+                  </Text>
+                  <Text lilbit bold>
+                    [{item}]
+                  </Text>
+                </View>
+              )}
+              ItemSeparatorComponent={() => (
+                <View height={theme.sizes.lilbit} />
+              )}
+            />
+          </View>
+          <View height={1} color={theme.colors.black_t90} />
+          <View padding={theme.sizes.base} row space={"between"}>
+            <Text lilbit black_t30>
+              Total
+            </Text>
+            <Text lilbit bold>
+              [Total]
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    );
+  }
+}
+
+export { Verifikasi, VerifikasiConfirm, VerifikasiDetail };
 
 const styles = GlobalStyle;

@@ -21,10 +21,11 @@ export default class ListMajikan extends Component {
     headerTintColor: theme.colors.primary,
   });
 
-  item(){
+  item = () => {
+    const {navigate} = this.props.navigation
     return(
       <View radius={theme.sizes.base/2} color={'white'} shadow ovHidden margin={[0, theme.sizes.base]}>
-        <Touch onPress={() => null}>
+        <Touch onPress={() => navigate('DetailMajikan')}>
           <View row padding={theme.sizes.base*.5}>
             <View>
               <Image
@@ -71,17 +72,18 @@ export default class ListMajikan extends Component {
               </View>
             </Button>
           </View>
-          <this.item />
-          {/* <FlatList
-            data={this.state.data_arr}
+
+          {/* <this.item /> */}
+          <FlatList
+            data={[0,1,2,3]}
             renderItem={({item}) => 
-              <ListKontrakItem item={item} navigation={this.props.navigation} />
+              <this.item />
             }
-            keyExtractor={item => item.id}
-            ItemSeparatorComponent={() => <Separator />}
+            keyExtractor={({item, index}) => index}
+            ItemSeparatorComponent={() => <View height={theme.sizes.base}/>}
             scrollEnabled={false}
-            ListFooterComponent={() => <Separator />}
-          /> */}
+            ListFooterComponent={() => <View height={theme.sizes.base}/>}
+          />
         </ScrollView>
       </View>
     );

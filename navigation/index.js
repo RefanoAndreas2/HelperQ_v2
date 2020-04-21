@@ -46,12 +46,15 @@ import {
 
 import {
   ChangePassword,
+  DetailMajikan,
   ListFoto,
   ListMajikan,
   PrivacyPolicy,
   Settings,
   TermsAndCondition,
   Verifikasi,
+  VerifikasiConfirm,
+  VerifikasiDetail,
   ViewData,
   ViewDokumen,
   ViewGeneral,
@@ -354,14 +357,17 @@ const indexBottomTab = createBottomTabNavigator({
 })
 
 const indexStack = createStackNavigator({
-  ListMajikan,
   indexBottomTab:{
     screen: indexBottomTab,
     navigationOptions: {
       headerShown: false
     }
   },
+  VerifikasiDetail,
+  VerifikasiConfirm,
   Verifikasi,
+  ListMajikan,
+  DetailMajikan,
   ViewData,
   ViewProfile,
   ListFoto,
@@ -386,8 +392,8 @@ const indexStack = createStackNavigator({
 },titleStyle)
 
 const switcher = createSwitchNavigator({
-  formStack,
   authStack,
+  formStack,
   indexStack,
 },{
   defaultNavigationOptions:{

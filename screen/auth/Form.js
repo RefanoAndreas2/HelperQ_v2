@@ -24,7 +24,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { StackActions, NavigationActions } from 'react-navigation';
 import Base from '../../Utils/Base'
 import moment from 'moment'
-import ImagePicker from 'react-native-image-picker'
+// import ImagePicker from 'react-native-image-picker'
 
 class Kategori extends Base {
   constructor(props) {
@@ -1034,20 +1034,20 @@ class UploadKtp extends Base {
   }
 
   async choosePhoto(){
-    ImagePicker.showImagePicker(async(response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-            } else {
-                // arr.picture = response.data
-                // arr.image_display = {uri : response.uri}
+    // ImagePicker.showImagePicker(async(response) => {
+    //         if (response.didCancel) {
+    //             console.log('User cancelled image picker');
+    //         } else if (response.error) {
+    //             console.log('ImagePicker Error: ', response.error);
+    //         } else if (response.customButton) {
+    //             console.log('User tapped custom button: ', response.customButton);
+    //         } else {
+    //             // arr.picture = response.data
+    //             // arr.image_display = {uri : response.uri}
 
-                await this.setState({ktpPlaceholder : response.uri, ktpData : response.data})
-            }
-        });
+    //             await this.setState({ktpPlaceholder : response.uri, ktpData : response.data})
+    //         }
+    //     });
   }
 
   async toNextPage(){
@@ -1147,34 +1147,34 @@ class UploadFotoProfil extends Base {
   }
 
   async choosePhoto(){
-    ImagePicker.showImagePicker(async(response) => {
-      if (response.didCancel) {
-          console.log('User cancelled image picker');
-      } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-          console.log('User tapped custom button: ', response.customButton);
-      } else {
-          // await this.setState({imgPlaceholder : {uri : response.uri}, imageData : response.data})
+    // ImagePicker.showImagePicker(async(response) => {
+    //   if (response.didCancel) {
+    //       console.log('User cancelled image picker');
+    //   } else if (response.error) {
+    //       console.log('ImagePicker Error: ', response.error);
+    //   } else if (response.customButton) {
+    //       console.log('User tapped custom button: ', response.customButton);
+    //   } else {
+    //       // await this.setState({imgPlaceholder : {uri : response.uri}, imageData : response.data})
 
-          if(this.state.async_role == 'majikan'){
-            await this.setState({photo_arr : [{image_display : {uri : response.uri}, picture : response.data, is_primary : 1}]})
-          }
-          else{
-            var arr_photo = this.state.photo_arr
-            var arr = {}
-            arr.picture = response.data
-            arr.image_display = {uri : response.uri}
-            arr.is_primary = 1
-            if(arr_photo.length > 0){
-                arr.is_primary = 0
-            }
-            arr_photo.push(arr)
+    //       if(this.state.async_role == 'majikan'){
+    //         await this.setState({photo_arr : [{image_display : {uri : response.uri}, picture : response.data, is_primary : 1}]})
+    //       }
+    //       else{
+    //         var arr_photo = this.state.photo_arr
+    //         var arr = {}
+    //         arr.picture = response.data
+    //         arr.image_display = {uri : response.uri}
+    //         arr.is_primary = 1
+    //         if(arr_photo.length > 0){
+    //             arr.is_primary = 0
+    //         }
+    //         arr_photo.push(arr)
   
-            await this.setState({photo_arr : arr_photo})
-          }
-      }
-    });
+    //         await this.setState({photo_arr : arr_photo})
+    //       }
+    //   }
+    // });
   }
 
   async saveData(){
